@@ -1,0 +1,30 @@
+repos:
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: web/node_modules/.bin/eslint
+        language: node
+        files: \.(js|ts|tsx)$
+        exclude: ^(docs/)|(quizzes/frontend-cathub/web)|(src/react-app-env\.d\.ts)
+        args: [
+          '--quiet',
+          '--resolve-plugins-relative-to web'
+        ]
+      - id: tsc
+        name: tsc
+        entry: node
+        args: ['--max-old-space-size=4096', 'web/node_modules/.bin/tsc', '-p', 'web/tsconfig.json']
+        language: node
+        files: \.(ts|tsx)$
+        pass_filenames: false
+      - id: prettier
+        name: prettier
+        entry: web/node_modules/.bin/prettier --write
+        language: node
+        files: \.(js|ts|tsx)$
+#  - repo: https://github.com/golangci/golangci-lint.git
+#    rev: v1.40.1
+#    hooks:
+#      - id: golangci-lint
+#        exclude: vendor/
