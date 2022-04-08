@@ -234,3 +234,6 @@ dist
 .tern-port
 
 *.env
+
+#JetBrains config
+.idea
