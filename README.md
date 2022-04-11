@@ -4,7 +4,7 @@
 1. Install Python
 2. Create virtual environment in project directory
 ```
-python -m venv .
+python -m venv venv
 ```
 3. Activate virtual environment
 ```
