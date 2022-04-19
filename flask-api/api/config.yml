@@ -1,0 +1,9 @@
+postgresDB:
+  name: postgres
+  user: postgres
+  password: xg/uFDHd9+NGZle8Dk8AEN7u9Zqa
+  host: profilaktykarz.ddns.net
+  port: 5432
+
+flask_secret:
+jwt_secret:
