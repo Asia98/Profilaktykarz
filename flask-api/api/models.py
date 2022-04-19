@@ -5,12 +5,12 @@ Copyright (c) 2019 - present AppSeed.us
 
 from datetime import datetime
 
-import json
-
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 
 class Users(db.Model):
@@ -55,7 +55,6 @@ class Users(db.Model):
         return cls.query.filter_by(email=email).first()
 
     def toDICT(self):
-
         cls_dict = {}
         cls_dict['_id'] = self.id
         cls_dict['username'] = self.username
@@ -64,7 +63,6 @@ class Users(db.Model):
         return cls_dict
 
     def toJSON(self):
-
         return self.toDICT()
 
 

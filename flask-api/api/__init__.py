@@ -7,9 +7,10 @@ import json
 
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from .routes import rest_api
-from .models import db
+from .models import db, migrate
 
 app = Flask(__name__)
 
@@ -17,16 +18,9 @@ app.config.from_object('api.config.BaseConfig')
 
 db.init_app(app)
 rest_api.init_app(app)
+migrate.init_app(app, db)
 CORS(app)
 
-# Setup database
-@app.before_first_request
-def initialize_database():
-    db.create_all()
-
-"""
-   Custom responses
-"""
 
 @app.after_request
 def after_request(response):
