@@ -13,7 +13,10 @@ import '@fontsource/open-sans/700.css'
 import '@fontsource/roboto-mono/400.css'
 import '@fontsource/roboto-mono/700.css'
 
-const config: ThemeConfig = {}
+const config: ThemeConfig = {
+  initialColorMode: 'light',
+}
+
 const theme = extendTheme({
   config,
   fonts: {
