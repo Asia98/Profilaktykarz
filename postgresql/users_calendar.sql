@@ -6,7 +6,7 @@ If new user is created and he/she fills or updates the form with their medical i
 */
 
 
-create or replace view users_calendar as (
+create or replace view users_calendar_vw as (
   select c.user_id
       , c.checkup_id
       , c.medical_checkup
@@ -17,7 +17,7 @@ create or replace view users_calendar as (
              when his.is_last_checkup_good = 1 then to_char((his.last_checkup_date + interval '1' year * c.cycle_years) :: date, 'yyyy-mm-dd') 
              else to_char((his.last_checkup_date + interval '1' year * c.cycle_years * 0.5) :: date, 'yyyy-mm-dd') 
              end as next_checkup_date
-  from users_checkups c 
+  from users_checkups_vw c 
   inner join (select * from (
     			select *, row_number() over (partition by user_id, checkup_id order by last_checkup_date desc) AS checkup_order 
                 from users_checkup_history 

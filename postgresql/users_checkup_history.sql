@@ -10,7 +10,7 @@ create table users_checkup_history (user_id integer not null
 									, medical_checkup varchar(100) not null
 									, last_checkup_date date null
 									, is_last_checkup_good smallint null
-									, last_filled timestamp null);
+									, last_filled timestamp not null);
 
 /*
 For each of assigned in users_checkups checkup user should be asked separately for the last date.

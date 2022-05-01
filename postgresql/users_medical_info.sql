@@ -7,9 +7,9 @@ Record insertion is meant to be handled in code.
 create table users_medical_info (user_id integer PRIMARY KEY
                                 , birth_date date not null
                                 , gender char(1) not null
-                                , family_factors integer[] -- varchar(100) null
-                                , user_factors integer[] -- varchar(100) null
-                                , last_filled timestamp null);
+                                , family_factors integer[] null -- varchar(100) null
+                                , user_factors integer[] null -- varchar(100) null
+                                , last_filled timestamp not null);
 
 
 /*

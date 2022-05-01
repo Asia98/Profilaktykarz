@@ -9,9 +9,9 @@ create table medical_checkups (id integer PRIMARY KEY
 							, age_to smallint not null
 							, gender char(1) null
 							, medical_checkup varchar(100) not null
-							, family_factors integer[] -- varchar(100) null
-							, user_factors integer[] -- varchar(100) null
-							, cycle_years real);
+							, family_factors integer[] null -- varchar(100) null
+							, user_factors integer[] null -- varchar(100) null
+							, cycle_years real not null);
 	
     						
 insert into medical_checkups (id, age_from, age_to, gender, medical_checkup, family_factors, user_factors, cycle_years) values 

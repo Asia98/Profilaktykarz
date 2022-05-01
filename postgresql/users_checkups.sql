@@ -6,7 +6,7 @@ will be automatically updated/show new records.
 */
 
 
-create or replace view users_checkups as (
+create or replace view users_checkups_vw as (
   select user_id, checkup_id, medical_checkup, cycle_years--, record_date, next_default_checkup_date 
     from (
       with user_data as (select *, date_part('year', age(current_date, birth_date)) as user_age from users_medical_info)
