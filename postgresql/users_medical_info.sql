@@ -4,12 +4,12 @@ Record insertion is meant to be handled in code.
 */
 
 
-create table users_medical_info (user_id integer PRIMARY KEY
+create table users_medical_info (user_id integer PRIMARY KEY references users(id)
                                 , birth_date date not null
                                 , gender char(1) not null
                                 , family_factors integer[] null -- varchar(100) null
                                 , user_factors integer[] null -- varchar(100) null
-                                , last_filled timestamp not null);
+                                , last_filled timestamp not null default localtimestamp);
 
 
 /*
@@ -31,12 +31,12 @@ Second way (When form displays names and in code names are already linked to IDs
 After getting IDs from selected by users factors, we can insert records to users_medical_info just like in the exemplary inserts below:  
 */
 
-insert into users_medical_info (user_id, birth_date, gender, family_factors, user_factors, last_filled) values 
-	(1, '1998-09-03', 'M', null, '{2,23}', localtimestamp)
-	, (2, '1996-10-19', 'M', null, '{5,22}', localtimestamp)
-	, (3, '1938-09-03', 'K', '{2, 3, 4}', '{11}', localtimestamp);
+insert into users_medical_info (user_id, birth_date, gender, family_factors, user_factors) values 
+	(1, '1998-09-03', 'M', null, '{2,23}')
+	, (2, '1996-10-19', 'M', null, '{5,22}')
+	, (3, '1938-09-01', 'K', '{2, 3, 4}', '{11}');
 
 -- In case when change of record is needed you can use following command:
 update users_medical_info 
-set birth_date = '1938-09-01'
-where user_id = 3;
+set birth_date = '1922-01-01'
+where user_id = 1;
