@@ -55,7 +55,7 @@ def token_required(f):
             return {"success": False, "msg": "Valid JWT token is missing"}, 400
 
         try:
-            data = jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
+            data = jwt.decode(token, BaseConfig.JWT_SECRET_KEY, algorithms=["HS256"])
             current_user = Users.get_by_email(data["email"])
 
             if not current_user:
@@ -137,8 +137,8 @@ class Login(Resource):
             return {"success": False,
                     "msg": "Wrong credentials."}, 400
 
-        # create access token uwing JWT
-        token = jwt.encode({'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=30)}, BaseConfig.SECRET_KEY)
+        # create access token using JWT
+        token = jwt.encode({'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=30)}, BaseConfig.JWT_SECRET_KEY)
 
         user_exists.set_jwt_auth_active(True)
         user_exists.save()
