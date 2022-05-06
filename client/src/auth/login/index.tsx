@@ -47,7 +47,7 @@ const Login = () => {
       return
     }
 
-    localStorage.setItem('profilaktykarzUser', JSON.stringify(response))
+    localStorage.setItem('profilaktykarzUser', JSON.stringify({...response, success: undefined}))
 
     toast({
       description: 'Zalogowano pomyślnie',
