@@ -30,7 +30,7 @@ const Login = () => {
 
   const _handleSubmit = async (data: SignupForm) => {
     const response = (await (
-      await fetch('http://localhost:5000/api/users/login', {
+      await fetch('http://localhost:5000/api/users/register', {
         body: JSON.stringify(data),
         headers: {'Content-Type': 'application/json'},
         method: 'POST',
@@ -53,8 +53,6 @@ const Login = () => {
     })
     history.push('/')
   }
-
-  console.log(watch('email'))
 
   return (
     <Container maxW="container.xl">
