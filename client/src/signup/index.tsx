@@ -1,7 +1,6 @@
 import React from 'react'
 
 import {
-  Button,
   Container,
   FormControl,
   FormErrorMessage,
@@ -11,10 +10,10 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
+import {useHistory} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
-import { Link, useHistory } from 'react-router-dom'
 
-import {LoginForm, LoginResponse} from './types'
+import {SignupForm, SignupResponse} from './types'
 
 const emailRegexPattern =
   /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i // eslint-disable-line
@@ -27,16 +26,16 @@ const Login = () => {
     handleSubmit,
     watch,
     formState: {errors},
-  } = useForm<LoginForm>()
+  } = useForm<SignupForm>()
 
-  const _handleSubmit = async (data: LoginForm) => {
+  const _handleSubmit = async (data: SignupForm) => {
     const response = (await (
       await fetch('http://localhost:5000/api/users/login', {
         body: JSON.stringify(data),
         headers: {'Content-Type': 'application/json'},
         method: 'POST',
       })
-    ).json()) as LoginResponse
+    ).json()) as SignupResponse
     console.log(response)
     if (!response.success) {
       toast({
@@ -64,7 +63,7 @@ const Login = () => {
         <form onSubmit={handleSubmit(_handleSubmit)}>
           <Stack>
             <FormControl id="email" isInvalid={!!errors.email}>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Adres email</FormLabel>
               <Input
                 {...register('email', {
                   pattern: emailRegexPattern,
@@ -76,18 +75,21 @@ const Login = () => {
               </FormErrorMessage>
             </FormControl>
 
+            <FormControl id="user" isInvalid={!!errors.username}>
+              <FormLabel>Nazwa użytkownika</FormLabel>
+              <Input {...register('username', {required: true})} />
+              <FormErrorMessage>Hasło jest obowiązkowe</FormErrorMessage>
+            </FormControl>
+
             <FormControl id="password" isInvalid={!!errors.password}>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <Input type="password" {...register('password', {required: true})} />
               <FormErrorMessage>Hasło jest obowiązkowe</FormErrorMessage>
             </FormControl>
 
-            <Input type="submit" value="Zaloguj się" />
+            <Input type="submit" value="Zarejestruj się" />
           </Stack>
         </form>
-        <Button as={Link} to="/signup">
-          Nie masz konta? Zarejestruj się!
-        </Button>
       </Stack>
     </Container>
   )
