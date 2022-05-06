@@ -47,6 +47,8 @@ const Login = () => {
       return
     }
 
+    localStorage.setItem('profilaktykarzUser', JSON.stringify(response))
+
     toast({
       description: 'Zalogowano pomyślnie',
       isClosable: true,
