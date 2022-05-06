@@ -10,7 +10,7 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
-import {useHistory} from 'react-router-dom'
+import {Redirect, useHistory} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
 
 import {SignupForm, SignupResponse} from './types'
@@ -24,11 +24,10 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: {errors},
   } = useForm<SignupForm>()
 
-  const _handleSubmit = async (data: SignupForm) => {
+  const _handleSubmit = React.useCallback(async (data: SignupForm) => {
     const response = (await (
       await fetch('http://localhost:5000/api/users/register', {
         body: JSON.stringify(data),
@@ -52,6 +51,10 @@ const Login = () => {
       status: 'success',
     })
     history.push('/')
+  }, [history, toast])
+
+  if (localStorage.getItem('profilaktykarzUser')) {
+    return <Redirect to="/" />
   }
 
   return (
