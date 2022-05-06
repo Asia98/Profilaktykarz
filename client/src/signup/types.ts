@@ -4,12 +4,14 @@ export type SignupForm = {
   username: string
 }
 
-export type SignupResponse =
+export type SignupResponse = {
+  msg: string
+} & (
   | {
       success: false
-      msg: string
     }
   | {
       success: true
-      token: string
+      userID: string
     }
+)
