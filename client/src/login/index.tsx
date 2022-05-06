@@ -12,7 +12,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import {useForm} from 'react-hook-form'
-import { Link, useHistory } from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 
 import {LoginForm, LoginResponse} from './types'
 
@@ -54,8 +54,6 @@ const Login = () => {
     })
     history.push('/')
   }
-
-  console.log(watch('email'))
 
   return (
     <Container maxW="container.xl">
