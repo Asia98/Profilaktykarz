@@ -10,6 +10,9 @@ const Home = () => {
       <Button as={Link} to="/calendar">
         Zobacz kalendarz
       </Button>
+      <Button as={Link} to="/login">
+        Zaloguj się
+      </Button>
     </Container>
   )
 }

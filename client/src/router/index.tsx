@@ -6,6 +6,7 @@ export default () => {
     <Switch>
       <Route path="/" exact={true} component={require('@/home').default} />
       <Route path="/calendar" exact={true} component={require('@/calendar').default} />
+      <Route path="/login" exact={true} component={require('@/login').default} />
 
       <Route component={() => <Redirect to={{pathname: '/'}} />} />
     </Switch>
