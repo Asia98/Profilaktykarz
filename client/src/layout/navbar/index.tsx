@@ -13,7 +13,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react'
-import {Link as RouterLink} from 'react-router-dom'
+import {Link as RouterLink, useHistory} from 'react-router-dom'
 
 import NavLink, {NavLinkProps} from './nav-link'
 
@@ -24,6 +24,13 @@ const dropdownMenuDisplay = {md: 'none'}
 const Navbar = () => {
   const {isOpen, onOpen, onClose} = useDisclosure()
   const {colorMode, toggleColorMode} = useColorMode()
+  const history = useHistory()
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('profilaktykarzUser'))
+  }, [])
 
   const links: NavLinkProps[] = React.useMemo(
     () => [
@@ -34,6 +41,18 @@ const Navbar = () => {
     ],
     []
   )
+
+  const handleLoginButtonClick = React.useCallback(() => {
+    if (!localStorage.getItem('profilaktykarzUser')) {
+      setIsLoggedIn(true)
+      history.push('/login')
+      return
+    }
+
+    localStorage.removeItem('profilaktykarzUser')
+    setIsLoggedIn(false)
+    history.push('/')
+  }, [history])
 
   return (
     <Box bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -83,8 +102,9 @@ const Navbar = () => {
               }}
               fontSize="sm"
               cursor="pointer"
+              onClick={handleLoginButtonClick}
             >
-              {localStorage.getItem('profilaktykarzUser') ? 'Wyloguj' : 'Zaloguj'}
+              {isLoggedIn ? 'Wyloguj' : 'Zaloguj'}
             </Button>
           </HStack>
         </Flex>
