@@ -6,13 +6,7 @@ import {Link} from 'react-router-dom'
 const Home = () => {
   return (
     <Container maxW="container.xl">
-      <Heading size="xl">Profilaktykarz</Heading>
-      <Button as={Link} to="/calendar">
-        Zobacz kalendarz
-      </Button>
-      <Button as={Link} to="/login">
-        Zaloguj się
-      </Button>
+      <Heading size="xl">Profilaktykarz - strona główna</Heading>
     </Container>
   )
 }

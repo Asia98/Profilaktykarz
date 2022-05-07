@@ -42,17 +42,13 @@ const ExaminationCalendar = () => {
 
   return (
     <Container maxWidth="container.xl" h="500px">
-      <Button as={Link} to="/home">
-        Powrót
-      </Button>
-
       <Heading size="lg" textAlign="center" my="5">
         Kalendarz badań
       </Heading>
 
       <Calendar
         messages={calendarTranslations}
-        views={['month']}
+        views={calendarViews}
         localizer={localizer}
         events={events}
         startAccessor="start"
