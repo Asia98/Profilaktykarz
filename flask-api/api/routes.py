@@ -12,11 +12,10 @@ from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import db, Users, JWTTokenBlocklist
+from .models import db, Users, JWTTokenBlocklist, Factor
 from .config import BaseConfig
 
 rest_api = Api(version="1.0", title="Users API")
-
 
 """
     Flask-Restx models for api request and response data
@@ -32,17 +31,23 @@ login_model = rest_api.model('LoginModel', {"email": fields.String(required=True
                                             })
 
 user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(required=True, min_length=1, max_length=32),
-                                                   "username": fields.String(required=True, min_length=2, max_length=32),
+                                                   "username": fields.String(required=True, min_length=2,
+                                                                             max_length=32),
                                                    "email": fields.String(required=True, min_length=4, max_length=64)
                                                    })
 
+factors_model = rest_api.model('FactorsModel', {"area": fields.String(required=True, min_length=1, max_length=50),
+                                                "factor": fields.String(required=True, min_length=2,
+                                                                        max_length=100),
+                                                "comment": fields.String(required=True, min_length=4, max_length=500)
+                                                })
 
 """
    Helper function for JWT token required
 """
 
-def token_required(f):
 
+def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
 
@@ -91,7 +96,6 @@ class Register(Resource):
 
     @rest_api.expect(signup_model, validate=True)
     def post(self):
-
         req_data = request.get_json()
 
         _username = req_data.get("username")
@@ -182,7 +186,6 @@ class LogoutUser(Resource):
 
     @token_required
     def post(self, current_user):
-
         _jwt_token = request.headers["authorization"]
 
         jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
@@ -192,3 +195,10 @@ class LogoutUser(Resource):
         self.save()
 
         return {"success": True}, 200
+
+
+@rest_api.route('/api/factors')
+class GetFactors(Resource):
+    @rest_api.marshal_with(factors_model, envelope='resource')
+    def get(self):
+        return Factor.get_all()
