@@ -8,6 +8,8 @@ import '@/i18n'
 import Router from '@/router'
 import {store} from '@/store'
 
+import Navbar from './layout/navbar'
+
 import '@fontsource/open-sans/400.css'
 import '@fontsource/open-sans/700.css'
 import '@fontsource/roboto-mono/400.css'
@@ -31,6 +33,7 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Provider store={store}>
+          <Navbar />
           <Router />
         </Provider>
       </BrowserRouter>
