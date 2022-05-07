@@ -28,33 +28,36 @@ const Login = () => {
     formState: {errors},
   } = useForm<LoginForm>()
 
-  const _handleSubmit = React.useCallback(async (data: LoginForm) => {
-    const response = (await (
-      await fetch('http://localhost:5000/api/users/login', {
-        body: JSON.stringify(data),
-        headers: {'Content-Type': 'application/json'},
-        method: 'POST',
-      })
-    ).json()) as LoginResponse
-    console.log(response)
-    if (!response.success) {
+  const _handleSubmit = React.useCallback(
+    async (data: LoginForm) => {
+      const response = (await (
+        await fetch('http://localhost:5000/api/users/login', {
+          body: JSON.stringify(data),
+          headers: {'Content-Type': 'application/json'},
+          method: 'POST',
+        })
+      ).json()) as LoginResponse
+
+      if (!response.success) {
+        toast({
+          description: response.msg,
+          isClosable: true,
+          status: 'error',
+        })
+        return
+      }
+
+      localStorage.setItem('profilaktykarzUser', JSON.stringify({...response, success: undefined}))
+
       toast({
-        description: response.msg,
+        description: 'Zalogowano pomyślnie',
         isClosable: true,
-        status: 'error',
+        status: 'success',
       })
-      return
-    }
-
-    localStorage.setItem('profilaktykarzUser', JSON.stringify({...response, success: undefined}))
-
-    toast({
-      description: 'Zalogowano pomyślnie',
-      isClosable: true,
-      status: 'success',
-    })
-    history.push('/')
-  }, [history, toast])
+      history.push('/')
+    },
+    [history, toast]
+  )
 
   if (localStorage.getItem('profilaktykarzUser')) {
     return <Redirect to="/" />

@@ -27,31 +27,34 @@ const Login = () => {
     formState: {errors},
   } = useForm<SignupForm>()
 
-  const _handleSubmit = React.useCallback(async (data: SignupForm) => {
-    const response = (await (
-      await fetch('http://localhost:5000/api/users/register', {
-        body: JSON.stringify(data),
-        headers: {'Content-Type': 'application/json'},
-        method: 'POST',
-      })
-    ).json()) as SignupResponse
-    console.log(response)
-    if (!response.success) {
-      toast({
-        description: response.msg,
-        isClosable: true,
-        status: 'error',
-      })
-      return
-    }
+  const _handleSubmit = React.useCallback(
+    async (data: SignupForm) => {
+      const response = (await (
+        await fetch('http://localhost:5000/api/users/register', {
+          body: JSON.stringify(data),
+          headers: {'Content-Type': 'application/json'},
+          method: 'POST',
+        })
+      ).json()) as SignupResponse
 
-    toast({
-      description: 'Zalogowano pomyślnie',
-      isClosable: true,
-      status: 'success',
-    })
-    history.push('/')
-  }, [history, toast])
+      if (!response.success) {
+        toast({
+          description: response.msg,
+          isClosable: true,
+          status: 'error',
+        })
+        return
+      }
+
+      toast({
+        description: 'Zalogowano pomyślnie',
+        isClosable: true,
+        status: 'success',
+      })
+      history.push('/')
+    },
+    [history, toast]
+  )
 
   if (localStorage.getItem('profilaktykarzUser')) {
     return <Redirect to="/" />
