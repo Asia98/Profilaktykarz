@@ -13,6 +13,25 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 migrate = Migrate()
 
+t_users_checkups_vw = db.Table(
+    'users_checkups_vw',
+    db.Column('user_id', db.Integer),
+    db.Column('checkup_id', db.Integer),
+    db.Column('medical_checkup', db.String(100)),
+    db.Column('cycle_years', db.Float)
+)
+
+t_users_calendar_vw = db.Table(
+    'users_calendar_vw',
+    db.Column('user_id', db.Integer),
+    db.Column('checkup_id', db.Integer),
+    db.Column('medical_checkup', db.String(100)),
+    db.Column('cycle_years', db.Float),
+    db.Column('last_checkup', db.Text),
+    db.Column('is_last_checkup_good', db.SmallInteger),
+    db.Column('next_checkup_date', db.Text)
+)
+
 
 class Users(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -92,8 +111,19 @@ class Factor(db.Model):
         return f"Factor {self.factor}"
 
     @classmethod
-    def get_all(cls):
+    def get_all_factors(cls):
         return cls.query.all()
+
+    @classmethod
+    def get_family_factors(cls):
+        return cls.query.filter(cls.area == "Choroba przewlekła").all()
+
+    @classmethod
+    def get_factors_id(cls):
+        return [cls.id for cls in cls.get_all_factors()]
+
+    def to_json(self):
+        return {'id': self.id, 'factor': self.factor, 'comment': self.comment}
 
 
 class MedicalCheckup(db.Model):
@@ -112,7 +142,7 @@ class MedicalCheckup(db.Model):
         return f"Medical checkup {self.medical_checkup}"
 
 
-class UsersMedicalInfo(Users):
+class UsersMedicalInfo(db.Model):
     __tablename__ = 'users_medical_info'
 
     user_id = db.Column(db.ForeignKey('users.id'), primary_key=True)
@@ -121,6 +151,28 @@ class UsersMedicalInfo(Users):
     family_factors = db.Column(db.ARRAY(INTEGER()))
     user_factors = db.Column(db.ARRAY(INTEGER()))
     last_filled = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
+
+    user = db.relationship('Users', primaryjoin='UsersMedicalInfo.user_id == Users.id',
+                           backref='users_medical_info')
+
+    def save(self):
+        self.last_filled = datetime.now()
+        db.session.add(self)
+        db.session.commit()
+
+    def update_family_factors(self, family_factors):
+        if not family_factors:
+            family_factors = None
+        self.family_factors = family_factors
+
+    def update_user_factors(self, user_factors):
+        if not user_factors:
+            user_factors = None
+        self.user_factors = user_factors
+
+    @classmethod
+    def get_by_user_id(cls, user_id):
+        return cls.query.get(user_id)
 
 
 class UsersCheckupHistory(db.Model):
