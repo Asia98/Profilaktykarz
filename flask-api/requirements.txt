@@ -10,3 +10,4 @@ markupsafe==2.0.1
 Flask-Migrate
 pyyaml
 psycopg2
+python-dateutil
