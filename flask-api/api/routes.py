@@ -2,21 +2,18 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-
 from datetime import datetime, timezone, timedelta
-
 from functools import wraps
 
-from flask import request
-from flask_restx import Api, Resource, fields
-
 import jwt
+from dateutil.parser import parse
+from flask import request
+from flask_restx import Api, Resource, fields, marshal
 
-from .models import db, Users, JWTTokenBlocklist
 from .config import BaseConfig
+from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo
 
 rest_api = Api(version="1.0", title="Users API")
-
 
 """
     Flask-Restx models for api request and response data
@@ -32,17 +29,24 @@ login_model = rest_api.model('LoginModel', {"email": fields.String(required=True
                                             })
 
 user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(required=True, min_length=1, max_length=32),
-                                                   "username": fields.String(required=True, min_length=2, max_length=32),
+                                                   "username": fields.String(required=True, min_length=2,
+                                                                             max_length=32),
                                                    "email": fields.String(required=True, min_length=4, max_length=64)
                                                    })
 
+factors_model = rest_api.model('FactorsModel', {"id": fields.String(required=True, min_length=1, max_length=50),
+                                                "name": fields.String(required=True, min_length=2, max_length=100,
+                                                                      attribute='factor'),
+                                                "description": fields.String(required=True, min_length=4,
+                                                                             max_length=500, attribute='comment')
+                                                })
 
 """
    Helper function for JWT token required
 """
 
-def token_required(f):
 
+def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
 
@@ -91,7 +95,6 @@ class Register(Resource):
 
     @rest_api.expect(signup_model, validate=True)
     def post(self):
-
         req_data = request.get_json()
 
         _username = req_data.get("username")
@@ -138,7 +141,8 @@ class Login(Resource):
                     "msg": "Wrong credentials."}, 400
 
         # create access token using JWT
-        token = jwt.encode({'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=30)}, BaseConfig.JWT_SECRET_KEY)
+        token = jwt.encode({'id': user_exists.id, 'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=90)},
+                           BaseConfig.JWT_SECRET_KEY)
 
         user_exists.set_jwt_auth_active(True)
         user_exists.save()
@@ -182,7 +186,6 @@ class LogoutUser(Resource):
 
     @token_required
     def post(self, current_user):
-
         _jwt_token = request.headers["authorization"]
 
         jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
@@ -192,3 +195,66 @@ class LogoutUser(Resource):
         self.save()
 
         return {"success": True}, 200
+
+
+@rest_api.route('/api/factors')
+class GetFactors(Resource):
+    @token_required
+    def get(self, api):
+        family_factors = Factor.get_family_factors()
+        mrsh_family_factors = marshal(family_factors, factors_model, envelope="familyFactors")
+        user_factors = Factor.get_all_factors()
+        mrsh_user_factors = marshal(user_factors, factors_model, envelope="userFactors")
+
+        response = {
+            "success": True,
+            "data": {
+                "familyFactors": mrsh_family_factors["familyFactors"],
+                "userFactors": mrsh_user_factors["userFactors"]
+            }
+        }
+        return response, 200
+
+    @token_required
+    def post(self, api):
+
+        def update_factors(user, user_factors, family_factors):
+            user.update_user_factors(user_factors)
+            user.update_family_factors(family_factors)
+            user.save()
+
+        req_data = request.get_json()
+
+        _family_factors = req_data.get("familyFactors")
+        _user_factors = req_data.get("userFactors")
+        _birth_date = req_data.get("birthDate")
+        _gender = req_data.get("gender")
+
+        if _gender != 'K' and _gender != 'M':
+            return {"success": False, "msg": "Incorrect value passed as gender."}, 400
+
+        try:
+            _birth_date = parse(_birth_date, fuzzy=True)
+        except ValueError:
+            return {"success": False, "msg": "Incorrect value passed as birthDate."}, 400
+
+        factor_ids = Factor.get_factors_id()
+        if _user_factors:
+            _user_factors = [int(f) for f in _user_factors.split(',')]
+            if not set(_user_factors).issubset(factor_ids):
+                return {"success": False, "msg": "Incorrect values passed as user factors."}, 400
+        if _family_factors:
+            _family_factors = [int(f) for f in _family_factors.split(',')]
+            if not set(_family_factors).issubset(factor_ids):
+                return {"success": False, "msg": "Incorrect values passed as family factors."}, 400
+
+        medical_info_exists = UsersMedicalInfo.get_by_user_id(self.id)
+        if medical_info_exists:
+            update_factors(medical_info_exists, _user_factors, _family_factors)
+        else:
+            new_medical_info = UsersMedicalInfo(user_id=self.id, birth_date=_birth_date, gender=_gender)
+            update_factors(new_medical_info, _user_factors, _family_factors)
+
+        return {"success": True,
+                "msg": "Medical info updated successfully"}, 200
+
