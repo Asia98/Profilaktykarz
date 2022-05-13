@@ -1,6 +1,16 @@
 import React from 'react'
 
-import {Container, FormControl, FormLabel, Input, Radio, RadioGroup, Stack} from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+} from '@chakra-ui/react'
 
 import {LocalStorageUser} from '@/auth/types'
 import {GetApiFactorsResponse} from '@/models'
@@ -29,6 +39,11 @@ const IntroductionForm = () => {
       }
     })()
   }, [])
+
+  const handleSubmit = React.useCallback(() => {
+    console.log(checkedFamilyFactors)
+    console.log(checkedUserFactors)
+  }, [checkedFamilyFactors, checkedUserFactors])
 
   return (
     <Container maxW="container.xl">
@@ -62,6 +77,9 @@ const IntroductionForm = () => {
           </FormLabel>
           <IntroductionFormFactors factors={familyFactors} />
         </FormControl>
+        <Button colorScheme="green" onClick={handleSubmit}>
+          Wyślij
+        </Button>
       </Stack>
     </Container>
   )
