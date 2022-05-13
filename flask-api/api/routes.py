@@ -34,7 +34,7 @@ user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(requi
                                                    "email": fields.String(required=True, min_length=4, max_length=64)
                                                    })
 
-factors_model = rest_api.model('FactorsModel', {"id": fields.String(required=True, min_length=1, max_length=50),
+factors_model = rest_api.model('FactorsModel', {"id": fields.Integer(required=True),
                                                 "name": fields.String(required=True, min_length=2, max_length=100,
                                                                       attribute='factor'),
                                                 "description": fields.String(required=True, min_length=4,
