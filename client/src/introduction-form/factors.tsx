@@ -6,11 +6,13 @@ import {Factor} from '@/types'
 
 type Props = {
   factors: Factor[]
+  checked: number[]
+  onChange: (checked: number[]) => void
 }
 
-const IntroductionFormFactors = ({factors}: Props) => {
+const IntroductionFormFactors = ({factors, checked, onChange}: Props) => {
   return (
-    <CheckboxGroup colorScheme="green">
+    <CheckboxGroup colorScheme="green" onChange={onChange} value={checked}>
       <Stack spacing={[1, 5]}>
         {factors.map((f, i) => (
           <Checkbox key={i} value={f.id}>
