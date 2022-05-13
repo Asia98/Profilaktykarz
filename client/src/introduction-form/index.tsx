@@ -10,15 +10,17 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  useToast,
 } from '@chakra-ui/react'
 
-import {getApiFactors} from '@/api'
+import {getApiFactors, postApiFactors} from '@/api'
 import Loading from '@/common/loading'
 import {Factor} from '@/types'
 
 import IntroductionFormFactors from './factors'
 
 const IntroductionForm = () => {
+  const toast = useToast()
   const [value, setValue] = React.useState<string | undefined>(undefined)
 
   const [userFactors, setUserFactors] = React.useState<Factor[]>([])
@@ -47,10 +49,26 @@ const IntroductionForm = () => {
     })()
   }, [])
 
-  const handleSubmit = React.useCallback(() => {
+  const handleSubmit = React.useCallback(async () => {
     console.log(checkedFamilyFactors)
     console.log(checkedUserFactors)
-  }, [checkedFamilyFactors, checkedUserFactors])
+    // TODO fix hardcoded birthDate and gender
+    const response = await postApiFactors({
+      birthDate: new Date('1920-02-10'),
+      familyFactors: checkedFamilyFactors,
+      gender: 'M',
+      userFactors: checkedUserFactors,
+    })
+    if (!response.success) {
+      toast({
+        description: response.msg,
+        isClosable: true,
+        status: 'error',
+      })
+      return
+    }
+    console.log(response)
+  }, [checkedFamilyFactors, checkedUserFactors, toast])
 
   return (
     <Container maxW="container.sm" py="2">
