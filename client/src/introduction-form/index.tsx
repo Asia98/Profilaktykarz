@@ -12,16 +12,22 @@ import {
   Stack,
 } from '@chakra-ui/react'
 
-import {LocalStorageUser} from '@/auth/types'
-import {GetApiFactorsResponse} from '@/models'
+import {getApiFactors} from '@/api'
+import Loading from '@/common/loading'
 import {Factor} from '@/types'
 
 import IntroductionFormFactors from './factors'
 
 const IntroductionForm = () => {
   const [value, setValue] = React.useState<string | undefined>(undefined)
+
   const [userFactors, setUserFactors] = React.useState<Factor[]>([])
+  const [checkedUserFactors, setCheckedUserFactors] = React.useState<number[]>([])
+
   const [familyFactors, setFamilyFactors] = React.useState<Factor[]>([])
+  const [checkedFamilyFactors, setCheckedFamilyFactors] = React.useState<number[]>([])
+
+  const [isLoadingFactors, setIsLoadingFactors] = React.useState(true)
 
   React.useEffect(() => {
     ;(async () => {
@@ -37,6 +43,7 @@ const IntroductionForm = () => {
       } catch (e) {
         console.error('Failed to fetch factors')
       }
+      setIsLoadingFactors(false)
     })()
   }, [])
 
@@ -46,7 +53,7 @@ const IntroductionForm = () => {
   }, [checkedFamilyFactors, checkedUserFactors])
 
   return (
-    <Container maxW="container.xl">
+    <Container maxW="container.sm" py="2">
       <Stack spacing="8">
         <FormControl>
           <FormLabel fontSize="lg" fontWeight="semibold">
@@ -56,7 +63,7 @@ const IntroductionForm = () => {
         </FormControl>
         <FormControl>
           <FormLabel fontSize="lg" fontWeight="semibold">
-            Płeć
+            Płeć biologiczna
           </FormLabel>
           <RadioGroup onChange={setValue} value={value}>
             <Stack>
@@ -69,13 +76,31 @@ const IntroductionForm = () => {
           <FormLabel fontSize="lg" fontWeight="semibold">
             Choroby
           </FormLabel>
-          <IntroductionFormFactors factors={userFactors} />
+          {isLoadingFactors ? (
+            <Loading />
+          ) : (
+            <IntroductionFormFactors
+              factors={userFactors}
+              checked={checkedUserFactors}
+              onChange={setCheckedUserFactors}
+            />
+          )}
         </FormControl>
         <FormControl>
           <FormLabel fontSize="lg" fontWeight="semibold">
             Choroby występujące w rodzinie
           </FormLabel>
-          <IntroductionFormFactors factors={familyFactors} />
+          {isLoadingFactors ? (
+            <Box>
+              <Loading />
+            </Box>
+          ) : (
+            <IntroductionFormFactors
+              factors={familyFactors}
+              checked={checkedFamilyFactors}
+              onChange={setCheckedFamilyFactors}
+            />
+          )}
         </FormControl>
         <Button colorScheme="green" onClick={handleSubmit}>
           Wyślij
