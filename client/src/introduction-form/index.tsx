@@ -15,25 +15,18 @@ const IntroductionForm = () => {
 
   React.useEffect(() => {
     ;(async () => {
-      const localStorageUser = localStorage.getItem('profilaktykarzUser')
-      if (!localStorageUser) {
-        throw new Error('User is not authenticated')
+      try {
+        const response = await getApiFactors()
+
+        if (!response.success) {
+          throw new Error(response.msg)
+        }
+
+        setUserFactors(response.data.userFactors)
+        setFamilyFactors(response.data.userFactors)
+      } catch (e) {
+        console.error('Failed to fetch factors')
       }
-      const user = JSON.parse(localStorageUser) as LocalStorageUser
-
-      const response = (await (
-        await fetch('http://localhost:5000/api/factors', {
-          headers: {Authorization: user.token, 'Content-Type': 'application/json'},
-          method: 'GET',
-        })
-      ).json()) as GetApiFactorsResponse
-
-      if (!response.success) {
-        throw new Error('Failed to fetch factors')
-      }
-
-      setUserFactors(response.data.userFactors)
-      setFamilyFactors(response.data.userFactors)
     })()
   }, [])
 
