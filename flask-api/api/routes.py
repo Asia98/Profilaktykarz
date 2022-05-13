@@ -240,11 +240,13 @@ class GetFactors(Resource):
 
         factor_ids = Factor.get_factors_id()
         if _user_factors:
-            _user_factors = [int(f) for f in _user_factors.split(',')]
+            if isinstance(_user_factors, str):
+                _user_factors = [int(f) for f in _user_factors.split(',')]
             if not set(_user_factors).issubset(factor_ids):
                 return {"success": False, "msg": "Incorrect values passed as user factors."}, 400
         if _family_factors:
-            _family_factors = [int(f) for f in _family_factors.split(',')]
+            if isinstance(_family_factors, str):
+                _family_factors = [int(f) for f in _family_factors.split(',')]
             if not set(_family_factors).issubset(factor_ids):
                 return {"success": False, "msg": "Incorrect values passed as family factors."}, 400
 
