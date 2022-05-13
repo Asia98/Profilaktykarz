@@ -13,14 +13,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 migrate = Migrate()
 
-t_users_checkups_vw = db.Table(
-    'users_checkups_vw',
-    db.Column('user_id', db.Integer),
-    db.Column('checkup_id', db.Integer),
-    db.Column('medical_checkup', db.String(100)),
-    db.Column('cycle_years', db.Float)
-)
-
 t_users_calendar_vw = db.Table(
     'users_calendar_vw',
     db.Column('user_id', db.Integer),
@@ -181,7 +173,6 @@ class UsersCheckupHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True, server_default=db.FetchedValue())
     user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
     checkup_id = db.Column(db.ForeignKey('medical_checkups.id'), nullable=False)
-    medical_checkup = db.Column(db.String(100), nullable=False)
     last_checkup_date = db.Column(db.Date)
     is_last_checkup_good = db.Column(db.SmallInteger)
     last_filled = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
@@ -190,3 +181,21 @@ class UsersCheckupHistory(db.Model):
                               backref='users_checkup_histories')
     user = db.relationship('Users', primaryjoin='UsersCheckupHistory.user_id == Users.id',
                            backref='users_checkup_histories')
+
+    def save(self):
+        self.last_filled = datetime.now()
+        db.session.add(self)
+        db.session.commit()
+
+
+t_users_checkups_vw = db.Table(
+    'users_checkups_vw',
+    db.Column('user_id', db.Integer),
+    db.Column('checkup_id', db.Integer),
+    db.Column('medical_checkup', db.String(100)),
+    db.Column('cycle_years', db.Float)
+)
+
+
+def get_users_checkups(user_id):
+    return db.session.query(t_users_checkups_vw).filter(t_users_checkups_vw.c.user_id == user_id).all()
