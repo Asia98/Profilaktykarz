@@ -6,12 +6,13 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 
 import jwt
+from sqlalchemy.exc import SQLAlchemyError
 from dateutil.parser import parse
 from flask import request
 from flask_restx import Api, Resource, fields, marshal
 
 from .config import BaseConfig
-from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo
+from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo, UsersCheckupHistory, get_users_checkups
 
 rest_api = Api(version="1.0", title="Users API")
 
@@ -40,6 +41,11 @@ factors_model = rest_api.model('FactorsModel', {"id": fields.Integer(required=Tr
                                                 "description": fields.String(required=True, min_length=4,
                                                                              max_length=500, attribute='comment')
                                                 })
+
+last_visits_model = rest_api.model('LastVisitsView', {"id": fields.Integer(required=True, attribute='checkup_id'),
+                                                      "name": fields.String(required=True, min_length=2,
+                                                                            max_length=100, attribute='medical_checkup')
+                                                      })
 
 """
    Helper function for JWT token required
@@ -259,4 +265,43 @@ class GetFactors(Resource):
 
         return {"success": True,
                 "msg": "Medical info updated successfully"}, 200
+
+
+@rest_api.route('/api/last-visits')
+class LastVisits(Resource):
+    @token_required
+    def get(self, api):
+        users_checkups = get_users_checkups(self.id)
+        mrsh_users_checkups = marshal(users_checkups, last_visits_model, envelope="checkups")
+
+        response = {
+            "success": True,
+            "data": {
+                "checkups": mrsh_users_checkups["checkups"]
+            }
+        }
+        return response, 200
+
+    @token_required
+    def post(self, api):
+        req_data = request.get_json()
+
+        _users_checkups = req_data.get("checkups")
+
+        for checkup in _users_checkups:
+            if checkup['resultGood']:
+                checkup_result = 1
+            else:
+                checkup_result = 0
+            new_checkup = UsersCheckupHistory(user_id=self.id, checkup_id=checkup['id'],
+                                              last_checkup_date=checkup['lastCheckupDate'],
+                                              is_last_checkup_good=checkup_result)
+            try:
+                new_checkup.save()
+            except SQLAlchemyError as e:
+                return {"success": False,
+                        "msg": f"Saving visits failed with {e}."}, 400
+
+        return {"success": True,
+                "msg": f"{len(_users_checkups)} new visits saved to checkup history."}, 200
 
