@@ -14,11 +14,11 @@ create or replace view users_calendar_vw as (
       , to_char(his.last_checkup_date :: date, 'yyyy-mm-dd') last_checkup
       , his.is_last_checkup_good 
       , case when his.last_checkup_date is null then to_char(localtimestamp :: date, 'yyyy-mm-dd') 
-             when his.is_last_checkup_good = 1 then to_char((his.last_checkup_date + interval '1' year * c.cycle_years) :: date, 'yyyy-mm-dd') 
+             when his.is_last_checkup_good = 1 or his.is_last_checkup_good is null then to_char((his.last_checkup_date + interval '1' year * c.cycle_years) :: date, 'yyyy-mm-dd') 
              else to_char((his.last_checkup_date + interval '1' year * c.cycle_years * 0.5) :: date, 'yyyy-mm-dd') 
              end as next_checkup_date
   from users_checkups_vw c 
-  inner join (select * from (
+  left join (select * from (
     			select *, row_number() over (partition by user_id, checkup_id order by last_checkup_date desc) AS checkup_order 
                 from users_checkup_history 
     			) x where checkup_order = 1) his
