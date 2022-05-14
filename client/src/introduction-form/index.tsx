@@ -21,7 +21,9 @@ import IntroductionFormFactors from './factors'
 
 const IntroductionForm = () => {
   const toast = useToast()
-  const [value, setValue] = React.useState<string | undefined>(undefined)
+
+  const [birthDate, setBirthDate] = React.useState('')
+  const [gender, setGender] = React.useState<string>()
 
   const [userFactors, setUserFactors] = React.useState<Factor[]>([])
   const [checkedUserFactors, setCheckedUserFactors] = React.useState<number[]>([])
@@ -50,25 +52,45 @@ const IntroductionForm = () => {
   }, [])
 
   const handleSubmit = React.useCallback(async () => {
+    if (!birthDate || !gender) {
+      return
+    }
+    console.log(birthDate)
+    console.log(gender)
     console.log(checkedFamilyFactors)
     console.log(checkedUserFactors)
-    // TODO fix hardcoded birthDate and gender
-    const response = await postApiFactors({
-      birthDate: new Date('1920-02-10'),
-      familyFactors: checkedFamilyFactors,
-      gender: 'M',
-      userFactors: checkedUserFactors,
-    })
-    if (!response.success) {
+
+    try {
+      const response = await postApiFactors({
+        birthDate: birthDate,
+        familyFactors: checkedFamilyFactors,
+        gender: gender,
+        userFactors: checkedUserFactors,
+      })
+      if (!response.success) {
+        toast({
+          description: response.msg,
+          isClosable: true,
+          status: 'error',
+        })
+        return
+      }
+      console.log(response)
+    } catch (e) {
+      console.error('Failed to submit a form', e)
       toast({
-        description: response.msg,
+        description: 'Nie udało się przesłać formularza',
         isClosable: true,
         status: 'error',
       })
-      return
     }
-    console.log(response)
-  }, [checkedFamilyFactors, checkedUserFactors, toast])
+  }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, toast])
+
+  const handleDateChange = React.useCallback(({target: {value}}) => {
+    setBirthDate(value)
+  }, [])
+
+  const isSubmitDisabled = React.useMemo(() => !birthDate || !gender, [birthDate, gender])
 
   return (
     <Container maxW="container.sm" py="2">
@@ -77,16 +99,16 @@ const IntroductionForm = () => {
           <FormLabel fontSize="lg" fontWeight="semibold">
             Data urodzenia
           </FormLabel>
-          <Input type="date" />
+          <Input type="date" onChange={handleDateChange} />
         </FormControl>
         <FormControl>
           <FormLabel fontSize="lg" fontWeight="semibold">
             Płeć biologiczna
           </FormLabel>
-          <RadioGroup onChange={setValue} value={value}>
+          <RadioGroup onChange={setGender} value={gender}>
             <Stack>
-              <Radio value="male">Mężczyzna</Radio>
-              <Radio value="female">Kobieta</Radio>
+              <Radio value="M">Mężczyzna</Radio>
+              <Radio value="K">Kobieta</Radio>
             </Stack>
           </RadioGroup>
         </FormControl>
@@ -120,7 +142,7 @@ const IntroductionForm = () => {
             />
           )}
         </FormControl>
-        <Button colorScheme="green" onClick={handleSubmit}>
+        <Button colorScheme="green" onClick={handleSubmit} isDisabled={isSubmitDisabled}>
           Wyślij
         </Button>
       </Stack>
