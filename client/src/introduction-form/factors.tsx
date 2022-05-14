@@ -11,8 +11,15 @@ type Props = {
 }
 
 const IntroductionFormFactors = ({factors, checked, onChange}: Props) => {
+  const handleChange = React.useCallback(
+    (checked: string[]) => {
+      onChange(checked.map((c) => +c))
+    },
+    [onChange]
+  )
+
   return (
-    <CheckboxGroup colorScheme="green" onChange={onChange} value={checked}>
+    <CheckboxGroup colorScheme="green" onChange={handleChange} value={checked}>
       <Stack spacing={[1, 5]}>
         {factors.map((f, i) => (
           <Checkbox key={i} value={f.id}>
