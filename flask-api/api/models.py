@@ -13,17 +13,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 db = SQLAlchemy()
 migrate = Migrate()
 
-t_users_calendar_vw = db.Table(
-    'users_calendar_vw',
-    db.Column('user_id', db.Integer),
-    db.Column('checkup_id', db.Integer),
-    db.Column('medical_checkup', db.String(100)),
-    db.Column('cycle_years', db.Float),
-    db.Column('last_checkup', db.Text),
-    db.Column('is_last_checkup_good', db.SmallInteger),
-    db.Column('next_checkup_date', db.Text)
-)
-
 
 class Users(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -199,3 +188,19 @@ t_users_checkups_vw = db.Table(
 
 def get_users_checkups(user_id):
     return db.session.query(t_users_checkups_vw).filter(t_users_checkups_vw.c.user_id == user_id).all()
+
+
+t_users_calendar_vw = db.Table(
+    'users_calendar_vw',
+    db.Column('user_id', db.Integer),
+    db.Column('checkup_id', db.Integer),
+    db.Column('medical_checkup', db.String(100)),
+    db.Column('cycle_years', db.Float),
+    db.Column('last_checkup', db.Text),
+    db.Column('is_last_checkup_good', db.SmallInteger),
+    db.Column('next_checkup_date', db.Text)
+)
+
+
+def get_users_calendar(user_id):
+    return db.session.query(t_users_calendar_vw).filter(t_users_calendar_vw.c.user_id == user_id).all()
