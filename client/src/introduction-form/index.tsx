@@ -22,7 +22,7 @@ import IntroductionFormFactors from './factors'
 const IntroductionForm = () => {
   const toast = useToast()
 
-  const [birthDate, setBirthDate] = React.useState('')
+  const [birthDate, setBirthDate] = React.useState<Date>()
   const [gender, setGender] = React.useState<string>()
 
   const [userFactors, setUserFactors] = React.useState<Factor[]>([])
@@ -87,7 +87,11 @@ const IntroductionForm = () => {
   }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, toast])
 
   const handleDateChange = React.useCallback(({target: {value}}) => {
-    setBirthDate(value)
+    if (!value) {
+      setBirthDate(undefined)
+      return
+    }
+    setBirthDate(new Date(value))
   }, [])
 
   const isSubmitDisabled = React.useMemo(() => !birthDate || !gender, [birthDate, gender])
