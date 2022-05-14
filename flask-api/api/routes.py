@@ -12,7 +12,8 @@ from flask import request
 from flask_restx import Api, Resource, fields, marshal
 
 from .config import BaseConfig
-from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo, UsersCheckupHistory, get_users_checkups
+from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo, UsersCheckupHistory, get_users_checkups, \
+    get_users_calendar
 
 rest_api = Api(version="1.0", title="Users API")
 
@@ -46,6 +47,11 @@ last_visits_model = rest_api.model('LastVisitsView', {"id": fields.Integer(requi
                                                       "name": fields.String(required=True, min_length=2,
                                                                             max_length=100, attribute='medical_checkup')
                                                       })
+
+calendar_model = rest_api.model('CalendarView', {"name": fields.String(required=True, min_length=2,
+                                                                       max_length=100, attribute='medical_checkup'),
+                                                 "date": fields.Date(required=True, attribute='next_checkup_date')
+                                                 })
 
 """
    Helper function for JWT token required
@@ -305,3 +311,16 @@ class LastVisits(Resource):
         return {"success": True,
                 "msg": f"{len(_users_checkups)} new visits saved to checkup history."}, 200
 
+
+@rest_api.route('/api/user-calendar')
+class CalendarView(Resource):
+    @token_required
+    def get(self, api):
+        users_calendar_events = get_users_calendar(self.id)
+        mrsh_users_calendar_events = marshal(users_calendar_events, calendar_model, envelope="events")
+
+        response = {
+            "success": True,
+            "events": mrsh_users_calendar_events["events"]
+        }
+        return response, 200
