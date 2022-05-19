@@ -1,5 +1,6 @@
 # Profilaktykarz
 
+First terminal: starting backend
 ```
 cd flask-api
 python -m venv venv
@@ -10,9 +11,8 @@ export FLASK_ENV=development
 flask run
 ```
 
-Second terminal
+Second terminal: starting frontend
 ```
 cd react-ui
-yarn
-yarn start 
+npm install && npm start 
 ```
