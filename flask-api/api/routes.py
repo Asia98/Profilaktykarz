@@ -13,7 +13,7 @@ from flask_restx import Api, Resource, fields, marshal
 
 from .config import BaseConfig
 from .models import db, Users, JWTTokenBlocklist, Factor, UsersMedicalInfo, UsersCheckupHistory, get_users_checkups, \
-    get_users_calendar
+    get_users_calendar, MedicalCheckup, UsersCustomCheckup
 
 rest_api = Api(version="1.0", title="Users API")
 
@@ -52,6 +52,17 @@ calendar_model = rest_api.model('CalendarView', {"name": fields.String(required=
                                                                        max_length=100, attribute='medical_checkup'),
                                                  "date": fields.Date(required=True, attribute='next_checkup_date')
                                                  })
+
+medical_checkup_link = rest_api.model('CheckupLink', {"link": fields.String(required=True, min_length=2,
+                                                                            max_length=100, attribute='link')})
+
+custom_checkup_model = rest_api.model('CustomCheckupModel', {"name": fields.String(required=True, min_length=2,
+                                                                                   max_length=100,
+                                                                                   attribute='checkup_name'),
+                                                             "lastCheckup": fields.Date(required=True,
+                                                                                        attribute='last_checkup_date'),
+                                                             "cycle": fields.Integer(attribute='cycle_days'),
+                                                             "nextCheckup": fields.Date(attribute='next_checkup_date')})
 
 """
    Helper function for JWT token required
@@ -324,3 +335,68 @@ class CalendarView(Resource):
             "events": mrsh_users_calendar_events["events"]
         }
         return response, 200
+
+
+@rest_api.route('/api/user-calendar/checkup_link')
+class CheckupLink(Resource):
+    def get(self):
+        req_data = request.get_json()
+        _checkup_name = req_data.get("checkupName")
+
+        checkup_link = MedicalCheckup.get_link_by_checkup_name(_checkup_name)
+
+        if checkup_link is None:
+            return {"success": False, "msg": "No checkup with this name could be found in database."}, 400
+
+        else:
+            mrsh_checkup_link = marshal(checkup_link, medical_checkup_link)
+            response = {
+                "success": True,
+                "link": mrsh_checkup_link["link"]
+            }
+            return response, 200
+
+
+@rest_api.route('/api/custom-visit')
+class CustomVisits(Resource):
+    @token_required
+    @rest_api.expect(custom_checkup_model, validate=True)
+    def post(self, api):
+        req_data = request.get_json()
+
+        _custom_checkup_name = req_data.get("name")
+        _last_checkup_date = req_data.get("lastCheckup")
+        _cycle_days = req_data.get("cycle")
+        _next_checkup_date = req_data.get("nextCheckup")
+
+        try:
+            _last_checkup_date = parse(_last_checkup_date, fuzzy=True)
+        except ValueError:
+            return {"success": False, "msg": "Incorrect value passed as lastCheckup."}, 400
+
+        if not(_cycle_days and _next_checkup_date):
+            return {"success": False, "msg": "One value of the following can't be empty: cycle, nextCheckup"}, 400
+
+        if _cycle_days:
+            new_custom_checkup = UsersCustomCheckup(user_id=self.id, checkup_name=_custom_checkup_name,
+                                                    last_checkup_date=_last_checkup_date,
+                                                    cycle_days=_cycle_days)
+        elif _next_checkup_date:
+            try:
+                _next_checkup_date = parse(_next_checkup_date, fuzzy=True)
+            except ValueError:
+                return {"success": False, "msg": "Incorrect value passed as lastCheckup."}, 400
+            new_custom_checkup = UsersCustomCheckup(user_id=self.id, checkup_name=_custom_checkup_name,
+                                                    last_checkup_date=_last_checkup_date,
+                                                    next_checkup_date=_next_checkup_date)
+        else:
+            return {"success": False, "msg": "Unexpected error occurred."}, 400
+
+        try:
+            new_custom_checkup.save()
+        except SQLAlchemyError as e:
+            return {"success": False,
+                    "msg": f"Saving custom checkup failed with {e}."}, 400
+
+        return {"success": True,
+                "msg": f"Custom checkup saved successfully."}, 200

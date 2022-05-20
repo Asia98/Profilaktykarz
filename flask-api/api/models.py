@@ -7,7 +7,7 @@ from datetime import datetime
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import INTEGER
+from sqlalchemy import INTEGER, func as f
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -118,9 +118,14 @@ class MedicalCheckup(db.Model):
     family_factors = db.Column(db.ARRAY(INTEGER()))
     user_factors = db.Column(db.ARRAY(INTEGER()))
     cycle_years = db.Column(db.Float, nullable=False)
+    link = db.Column(db.String(100))
 
     def __repr__(self):
         return f"Medical checkup {self.medical_checkup}"
+
+    @classmethod
+    def get_link_by_checkup_name(cls, checkup_name):
+        return cls.query.filter(f.lower(cls.medical_checkup) == f.lower(checkup_name)).first()
 
 
 class UsersMedicalInfo(db.Model):
@@ -170,6 +175,25 @@ class UsersCheckupHistory(db.Model):
                               backref='users_checkup_histories')
     user = db.relationship('Users', primaryjoin='UsersCheckupHistory.user_id == Users.id',
                            backref='users_checkup_histories')
+
+    def save(self):
+        self.last_filled = datetime.now()
+        db.session.add(self)
+        db.session.commit()
+
+
+class UsersCustomCheckup(db.Model):
+    __tablename__ = 'users_custom_checkups'
+
+    id = db.Column(db.Integer, primary_key=True, server_default=db.FetchedValue())
+    user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
+    checkup_name = db.Column(db.String(100), nullable=False)
+    last_checkup_date = db.Column(db.Date)
+    cycle_days = db.Column(db.Integer)
+    next_checkup_date = db.Column(db.Date)
+    last_filled = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
+
+    user = db.relationship('Users', primaryjoin='UsersCustomCheckup.user_id == Users.id', backref='users_custom_checkups')
 
     def save(self):
         self.last_filled = datetime.now()
