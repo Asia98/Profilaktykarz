@@ -7,7 +7,7 @@ from datetime import datetime
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import INTEGER
+from sqlalchemy import INTEGER, func as f
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -122,6 +122,10 @@ class MedicalCheckup(db.Model):
 
     def __repr__(self):
         return f"Medical checkup {self.medical_checkup}"
+
+    @classmethod
+    def get_link_by_checkup_name(cls, checkup_name):
+        return cls.query.filter(f.lower(cls.medical_checkup) == f.lower(checkup_name)).first()
 
 
 class UsersMedicalInfo(db.Model):
