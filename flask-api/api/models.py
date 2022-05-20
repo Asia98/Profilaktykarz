@@ -118,6 +118,7 @@ class MedicalCheckup(db.Model):
     family_factors = db.Column(db.ARRAY(INTEGER()))
     user_factors = db.Column(db.ARRAY(INTEGER()))
     cycle_years = db.Column(db.Float, nullable=False)
+    link = db.Column(db.String(100))
 
     def __repr__(self):
         return f"Medical checkup {self.medical_checkup}"
@@ -170,6 +171,25 @@ class UsersCheckupHistory(db.Model):
                               backref='users_checkup_histories')
     user = db.relationship('Users', primaryjoin='UsersCheckupHistory.user_id == Users.id',
                            backref='users_checkup_histories')
+
+    def save(self):
+        self.last_filled = datetime.now()
+        db.session.add(self)
+        db.session.commit()
+
+
+class UsersCustomCheckup(db.Model):
+    __tablename__ = 'users_custom_checkups'
+
+    id = db.Column(db.Integer, primary_key=True, server_default=db.FetchedValue())
+    user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
+    checkup_name = db.Column(db.String(100), nullable=False)
+    last_checkup_date = db.Column(db.Date)
+    cycle_days = db.Column(db.Integer)
+    next_checkup_date = db.Column(db.Date)
+    last_filled = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
+
+    user = db.relationship('Users', primaryjoin='UsersCustomCheckup.user_id == Users.id', backref='users_custom_checkups')
 
     def save(self):
         self.last_filled = datetime.now()
