@@ -38,5 +38,5 @@ insert into users_medical_info (user_id, birth_date, gender, family_factors, use
 
 -- In case when change of record is needed you can use following command:
 update users_medical_info 
-set birth_date = '1900-01-01'
+set birth_date = '1950-01-01'
 where user_id = 1;
