@@ -13,4 +13,4 @@ venv/
 .idea
 
 # secrets
-config.yml
+api/config.yml
