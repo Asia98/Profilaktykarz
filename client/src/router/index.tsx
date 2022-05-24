@@ -12,6 +12,7 @@ export default () => {
       <Route path="/login" exact={true} component={require('@/auth/login').default} />
       <Route path="/signup" exact={true} component={require('@/auth/signup').default} />
       <ProtectedRoute path="/introduction-form" exact={true} component={require('@/introduction-form').default} />
+      <ProtectedRoute path="/last-visits" exact={true} component={require('@/last-visits-view').default} />
 
       <Route component={() => <Redirect to={{pathname: '/'}} />} />
     </Switch>
