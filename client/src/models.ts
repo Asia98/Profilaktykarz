@@ -1,4 +1,4 @@
-import {Factor} from './types'
+import {Factor, LastVisitCheckup} from './types'
 
 export type GetApiFactorsResponse =
   | {
@@ -21,6 +21,13 @@ export type PostApiFactorsRequest = {
 }
 
 export type PostApiFactorsResponse = {
-  success: boolean,
-  msg: string,
+  success: boolean
+  msg: string
+}
+
+export type GetApiLastVisitsResponse = {
+  success: boolean
+  data: {
+    checkups: LastVisitCheckup[]
+  }
 }
