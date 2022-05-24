@@ -14,6 +14,8 @@ import '@fontsource/open-sans/400.css'
 import '@fontsource/open-sans/700.css'
 import '@fontsource/roboto-mono/400.css'
 import '@fontsource/roboto-mono/700.css'
+import IntroductionFormBar from './layout/introduction-form-bar'
+import MedicalCheckupsBar from './layout/medical-checkups-bar'
 
 const config: ThemeConfig = {
   initialColorMode: 'light',
@@ -34,6 +36,8 @@ ReactDOM.render(
       <BrowserRouter>
         <Provider store={store}>
           <Navbar />
+          <IntroductionFormBar />
+          <MedicalCheckupsBar />
           <Router />
         </Provider>
       </BrowserRouter>
