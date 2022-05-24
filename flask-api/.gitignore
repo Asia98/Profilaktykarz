@@ -11,4 +11,6 @@ env__/
 app/db.sqlite3
 venv/
 .idea
+
+# secrets
 api/config.yml
