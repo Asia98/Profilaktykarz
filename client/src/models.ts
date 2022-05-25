@@ -31,3 +31,11 @@ export type GetApiLastVisitsResponse = {
     checkups: LastVisitCheckup[]
   }
 }
+
+export type GetApiInfoFormStatusResponse = {
+  medicalInfo: boolean
+}
+
+export type GetApiCheckupFormStatusResponse = {
+  medicalInfo: boolean
+}

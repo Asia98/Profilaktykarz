@@ -12,10 +12,23 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 
+import {getInfoFormStatus} from '@/api'
+
 const IntroductionFormBar = () => {
-  const alreadySubmitted = false
+  const [alreadySubmitted, setAlreadySubmitted] = React.useState(false)
 
   const backgroundColor = useColorModeValue('green.200', 'green.900')
+
+  React.useEffect(() => {
+    ;(async () => {
+      try {
+        const {medicalInfo} = await getInfoFormStatus()
+        console.log('medicalInfo', medicalInfo)
+      } catch (e) {
+        console.error('Failed to check if introduction form was already submitted', e)
+      }
+    })()
+  }, [])
 
   if (alreadySubmitted) {
     return null

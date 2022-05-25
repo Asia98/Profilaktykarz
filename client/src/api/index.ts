@@ -1,5 +1,12 @@
 import {LocalStorageUser} from '@/auth/types'
-import {GetApiFactorsResponse, GetApiLastVisitsResponse, PostApiFactorsRequest, PostApiFactorsResponse} from '@/models'
+import {
+  GetApiCheckupFormStatusResponse,
+  GetApiFactorsResponse,
+  GetApiInfoFormStatusResponse,
+  GetApiLastVisitsResponse,
+  PostApiFactorsRequest,
+  PostApiFactorsResponse,
+} from '@/models'
 
 export const getApiFactors = async () => {
   const localStorageUser = localStorage.getItem('profilaktykarzUser')
@@ -45,4 +52,34 @@ export const getApiLastVisits = async () => {
   })
 
   return (await response.json()) as GetApiLastVisitsResponse
+}
+
+export const getInfoFormStatus = async () => {
+  const localStorageUser = localStorage.getItem('profilaktykarzUser')
+  if (!localStorageUser) {
+    throw new Error('User is not authenticated')
+  }
+  const user = JSON.parse(localStorageUser) as LocalStorageUser
+
+  const response = await fetch('http://localhost:5000/api/info-form-status', {
+    headers: {Authorization: user.token, 'Content-Type': 'application/json'},
+    method: 'GET',
+  })
+
+  return (await response.json()) as GetApiInfoFormStatusResponse
+}
+
+export const getCheckupFormStatus = async () => {
+  const localStorageUser = localStorage.getItem('profilaktykarzUser')
+  if (!localStorageUser) {
+    throw new Error('User is not authenticated')
+  }
+  const user = JSON.parse(localStorageUser) as LocalStorageUser
+
+  const response = await fetch('http://localhost:5000/api/info-form-status', {
+    headers: {Authorization: user.token, 'Content-Type': 'application/json'},
+    method: 'GET',
+  })
+
+  return (await response.json()) as GetApiCheckupFormStatusResponse
 }
