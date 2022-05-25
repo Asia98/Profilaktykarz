@@ -3,7 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -181,6 +181,10 @@ class UsersCheckupHistory(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    @classmethod
+    def get_by_user_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).first()
+
 
 class UsersCustomCheckup(db.Model):
     __tablename__ = 'users_custom_checkups'
@@ -193,7 +197,8 @@ class UsersCustomCheckup(db.Model):
     next_checkup_date = db.Column(db.Date)
     last_filled = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
 
-    user = db.relationship('Users', primaryjoin='UsersCustomCheckup.user_id == Users.id', backref='users_custom_checkups')
+    user = db.relationship('Users', primaryjoin='UsersCustomCheckup.user_id == Users.id',
+                           backref='users_custom_checkups')
 
     def save(self):
         self.last_filled = datetime.now()
@@ -211,7 +216,7 @@ t_users_checkups_vw = db.Table(
 
 
 def get_users_checkups(user_id):
-    return db.session.query(t_users_checkups_vw).filter(t_users_checkups_vw.c.user_id == user_id).all()
+    return db.session.query(t_users_checkups_vw).filter_by(user_id=user_id).all()
 
 
 t_users_calendar_vw = db.Table(
@@ -227,4 +232,11 @@ t_users_calendar_vw = db.Table(
 
 
 def get_users_calendar(user_id):
-    return db.session.query(t_users_calendar_vw).filter(t_users_calendar_vw.c.user_id == user_id).all()
+    return db.session.query(t_users_calendar_vw).filter_by(user_id=user_id).all()
+
+
+def check_checkups_within_range(days=90):
+    today = datetime.now()
+    range_days = timedelta(days=days)
+    return db.session.query(t_users_calendar_vw).filter(t_users_calendar_vw.c.next_checkup_date
+                                                        .between(str(today), str(today + range_days))).all()
