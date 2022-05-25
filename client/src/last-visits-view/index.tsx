@@ -1,9 +1,10 @@
 import React from 'react'
 
-import {Box, Container, useToast} from '@chakra-ui/react'
+import {Box, Container, Stack, useToast} from '@chakra-ui/react'
 
 import {getApiLastVisits} from '@/api'
 import {LastVisitCheckup} from '@/types'
+import CheckupItem from './checkup-item'
 
 const LastVisitsView = () => {
   const toast = useToast()
@@ -34,11 +35,11 @@ const LastVisitsView = () => {
 
   return (
     <Container maxW="container.md">
-      {checkups.map((checkup, i) => (
-        <Box key={i}>
-          {checkup.id} {checkup.name}
-        </Box>
-      ))}
+      <Stack spacing="5">
+        {checkups.map((checkup, i) => (
+          <CheckupItem key={i} item={checkup} />
+        ))}
+      </Stack>
     </Container>
   )
 }
