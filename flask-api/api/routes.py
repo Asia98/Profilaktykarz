@@ -164,7 +164,8 @@ class Login(Resource):
                     "msg": "Wrong credentials."}, 400
 
         # create access token using JWT
-        token = jwt.encode({'id': user_exists.id, 'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=90)},
+        token = jwt.encode({'id': user_exists.id, 'email': _email,
+                            'exp': datetime.utcnow() + BaseConfig.JWT_ACCESS_TOKEN_EXPIRES},
                            BaseConfig.JWT_SECRET_KEY)
 
         user_exists.set_jwt_auth_active(True)
@@ -400,3 +401,35 @@ class CustomVisits(Resource):
 
         return {"success": True,
                 "msg": f"Custom checkup saved successfully."}, 200
+
+
+@rest_api.route('/api/users/info-form-status')
+class MedicalFormStatus(Resource):
+    @token_required
+    def get(self, api):
+        medical_info_exists = UsersMedicalInfo.get_by_user_id(self.id)
+        if medical_info_exists:
+            medical_info_status = True
+        else:
+            medical_info_status = False
+
+        response = {
+            "medicalInfo": medical_info_status
+        }
+        return response, 200
+
+
+@rest_api.route('/api/users/checkup-form-status')
+class CheckupFormStatus(Resource):
+    @token_required
+    def get(self, api):
+        checkup_history_exists = UsersCheckupHistory.get_by_user_id(self.id)
+        if checkup_history_exists:
+            checkup_history_status = True
+        else:
+            checkup_history_status = False
+
+        response = {
+            "checkupHistory": checkup_history_status
+        }
+        return response, 200
