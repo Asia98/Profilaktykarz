@@ -15,7 +15,7 @@ import {
 import {getInfoFormStatus} from '@/api'
 
 const IntroductionFormBar = () => {
-  const [alreadySubmitted, setAlreadySubmitted] = React.useState(false)
+  const [alreadySubmitted, setAlreadySubmitted] = React.useState(true)
 
   const backgroundColor = useColorModeValue('green.200', 'green.900')
 
@@ -23,7 +23,7 @@ const IntroductionFormBar = () => {
     ;(async () => {
       try {
         const {medicalInfo} = await getInfoFormStatus()
-        console.log('medicalInfo', medicalInfo)
+        setAlreadySubmitted(medicalInfo)
       } catch (e) {
         console.error('Failed to check if introduction form was already submitted', e)
       }

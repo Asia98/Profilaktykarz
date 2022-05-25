@@ -37,5 +37,5 @@ export type GetApiInfoFormStatusResponse = {
 }
 
 export type GetApiCheckupFormStatusResponse = {
-  medicalInfo: boolean
+  checkupHistory: boolean
 }
