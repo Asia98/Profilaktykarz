@@ -61,7 +61,7 @@ export const getInfoFormStatus = async () => {
   }
   const user = JSON.parse(localStorageUser) as LocalStorageUser
 
-  const response = await fetch('http://localhost:5000/api/info-form-status', {
+  const response = await fetch('http://localhost:5000/api/users/info-form-status', {
     headers: {Authorization: user.token, 'Content-Type': 'application/json'},
     method: 'GET',
   })
@@ -76,7 +76,7 @@ export const getCheckupFormStatus = async () => {
   }
   const user = JSON.parse(localStorageUser) as LocalStorageUser
 
-  const response = await fetch('http://localhost:5000/api/info-form-status', {
+  const response = await fetch('http://localhost:5000/api/users/checkup-form-status', {
     headers: {Authorization: user.token, 'Content-Type': 'application/json'},
     method: 'GET',
   })
