@@ -12,10 +12,23 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 
+import {getCheckupFormStatus} from '@/api'
+
 const MedicalCheckupsBar = () => {
-  const alreadySubmitted = false
+  const [alreadySubmitted, setAlreadySubmitted] = React.useState(true)
 
   const backgroundColor = useColorModeValue('green.200', 'green.900')
+
+  React.useEffect(() => {
+    ;(async () => {
+      try {
+        const {checkupHistory} = await getCheckupFormStatus()
+        setAlreadySubmitted(checkupHistory)
+      } catch (e) {
+        console.error('Failed to check if introduction form was already submitted', e)
+      }
+    })()
+  }, [])
 
   if (alreadySubmitted) {
     return null
@@ -26,7 +39,8 @@ const MedicalCheckupsBar = () => {
       <Container maxW="container.xl">
         <Flex justifyContent="space-between">
           <Text>
-            Dodaj informacje o swoich ostatnich wizytach u lekarza, aby uzyskać sugerowane daty kolejnych wizyt kontrolnych.
+            Dodaj informacje o swoich ostatnich wizytach u lekarza, aby uzyskać sugerowane daty kolejnych
+            wizyt kontrolnych.
           </Text>
           <Flex alignItems="center">
             <Box>
