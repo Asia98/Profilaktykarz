@@ -4,6 +4,7 @@ import {
   GetApiFactorsResponse,
   GetApiInfoFormStatusResponse,
   GetApiLastVisitsResponse,
+  GetApiUserCalendarResponse,
   PostApiFactorsRequest,
   PostApiFactorsResponse,
 } from '@/models'
@@ -82,4 +83,19 @@ export const getCheckupFormStatus = async () => {
   })
 
   return (await response.json()) as GetApiCheckupFormStatusResponse
+}
+
+export const getApiUserCalendar = async () => {
+  const localStorageUser = localStorage.getItem('profilaktykarzUser')
+  if (!localStorageUser) {
+    throw new Error('User is not authenticated')
+  }
+  const user = JSON.parse(localStorageUser) as LocalStorageUser
+
+  const response = await fetch('http://localhost:5000/api/user-calendar', {
+    headers: {Authorization: user.token, 'Content-Type': 'application/json'},
+    method: 'GET',
+  })
+
+  return (await response.json()) as GetApiUserCalendarResponse
 }
