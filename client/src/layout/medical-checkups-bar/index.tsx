@@ -4,6 +4,8 @@ import {
   Box,
   Container,
   Flex,
+  LinkBox,
+  LinkOverlay,
   SkeletonCircle,
   Tag,
   TagLabel,
@@ -44,10 +46,14 @@ const MedicalCheckupsBar = () => {
           </Text>
           <Flex alignItems="center">
             <Box>
-              <Tag flexShrink={0} variant="outline" colorScheme="facebook" size="lg">
-                <TagLabel>Uzupełnij informacje</TagLabel>
-                <TagRightIcon as={SkeletonCircle} startColor="facebook.400" endColor="facebook.200" />
-              </Tag>
+              <LinkBox>
+                <Tag flexShrink={0} variant="outline" colorScheme="facebook" size="lg">
+                  <TagLabel>
+                    <LinkOverlay href="/last-visits">Uzupełnij informacje</LinkOverlay>
+                  </TagLabel>
+                  <TagRightIcon as={SkeletonCircle} startColor="facebook.400" endColor="facebook.200" />
+                </Tag>
+              </LinkBox>
             </Box>
           </Flex>
         </Flex>

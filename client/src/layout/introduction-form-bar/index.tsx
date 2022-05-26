@@ -4,6 +4,8 @@ import {
   Box,
   Container,
   Flex,
+  LinkBox,
+  LinkOverlay,
   SkeletonCircle,
   Tag,
   TagLabel,
@@ -45,10 +47,14 @@ const IntroductionFormBar = () => {
           </Text>
           <Flex alignItems="center">
             <Box>
-              <Tag flexShrink={0} variant="outline" colorScheme="facebook" size="lg">
-                <TagLabel>Wypełnij formularz</TagLabel>
-                <TagRightIcon as={SkeletonCircle} startColor="facebook.400" endColor="facebook.200" />
-              </Tag>
+              <LinkBox>
+                <Tag flexShrink={0} variant="outline" colorScheme="facebook" size="lg">
+                  <TagLabel>
+                    <LinkOverlay href="/introduction-form">Wypełnij formularz</LinkOverlay>
+                  </TagLabel>
+                  <TagRightIcon as={SkeletonCircle} startColor="facebook.400" endColor="facebook.200" />
+                </Tag>
+              </LinkBox>
             </Box>
           </Flex>
         </Flex>
