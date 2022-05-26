@@ -4,6 +4,7 @@ import moment from 'moment'
 import 'moment/locale/pl'
 import {Calendar, momentLocalizer, Event, ViewsProps, Messages, SlotInfo} from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import './styles.css'
 import {Link} from 'react-router-dom'
 
 import {Button, Container, Heading, useToast} from '@chakra-ui/react'
@@ -93,6 +94,7 @@ const ExaminationCalendar = () => {
         return
       }
 
+      // TODO: display selected events in a modal
       console.log('selectedEvents', selectedEvents.length, selectedEvents)
     },
     [calendarEvents, toast]
