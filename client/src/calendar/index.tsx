@@ -2,11 +2,11 @@ import React from 'react'
 
 import moment from 'moment'
 import 'moment/locale/pl'
-import {Calendar, momentLocalizer, Event, ViewsProps, Messages} from 'react-big-calendar'
+import {Calendar, momentLocalizer, Event, ViewsProps, Messages, SlotInfo} from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {Link} from 'react-router-dom'
 
-import {Button, Container, Heading} from '@chakra-ui/react'
+import {Button, Container, Heading, useToast} from '@chakra-ui/react'
 import {getApiUserCalendar} from '@/api'
 import {CalendarEvent} from './types'
 
@@ -41,6 +41,7 @@ const calendarTranslations: Messages = {
 
 const ExaminationCalendar = () => {
   const localizer = momentLocalizer(moment)
+  const toast = useToast()
 
   const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
   const [calendarEvents, setCalendarEvents] = React.useState<Event[]>([])
@@ -68,10 +69,47 @@ const ExaminationCalendar = () => {
     })()
   }, [])
 
+  const handleCalendarEventsModalOpen = React.useCallback(
+    (days: Date[]) => {
+      const selectedDateSlots = days.map((d) => {
+        const tomorrow = new Date(d)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        return tomorrow.toISOString().split('T')[0]
+      })
+      console.log(selectedDateSlots)
+      const selectedEvents = calendarEvents.filter((ce) => {
+        const eventDate = ce.start?.toISOString().split('T')[0]
+        if (!eventDate) {
+          return false
+        }
+        return selectedDateSlots.includes(eventDate)
+      })
+
+      if (!selectedEvents.length) {
+        toast({
+          description: 'Brak zdarzeń w wybranym czasie',
+          isClosable: true,
+        })
+        return
+      }
+
+      console.log('selectedEvents', selectedEvents.length, selectedEvents)
+    },
+    [calendarEvents, toast]
+  )
+
+  const handleSlotsSelect = React.useCallback(
+    (slotInfo: SlotInfo) => {
+      console.log(slotInfo)
+      handleCalendarEventsModalOpen(slotInfo.slots)
+    },
+    [handleCalendarEventsModalOpen]
+  )
+
   return (
     <Container maxWidth="container.xl" h="500px">
       <Heading size="lg" textAlign="center" my="5">
-        Kalendarz badań
+        Kalendarz zalecanych terminów zbliżających się badań kontrolnych
       </Heading>
 
       <Calendar
@@ -81,6 +119,8 @@ const ExaminationCalendar = () => {
         events={calendarEvents}
         startAccessor="start"
         endAccessor="end"
+        onSelectSlot={handleSlotsSelect}
+        selectable={true}
       />
     </Container>
   )
