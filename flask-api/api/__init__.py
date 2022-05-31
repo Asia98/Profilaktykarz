@@ -1,16 +1,11 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 import json
 
 from flask import Flask
 from flask_cors import CORS
-from flask_migrate import Migrate
 
-from .routes import rest_api
 from .models import db, migrate
+from .routes import rest_api
+
 
 app = Flask(__name__)
 
