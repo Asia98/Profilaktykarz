@@ -1,0 +1,8 @@
+Dzień dobry, $name!
+Przypominamy o twoich nadchodzących wizytach:
+$checkups
+
+Pamiętaj, wizyty możesz zarezerwować poprzez swój kalendarz w serwisie Profilaktykarz!
+
+Pozdrawiamy,
+Zespół profilaktykarz

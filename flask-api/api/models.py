@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from datetime import datetime, timedelta
 
 from flask_migrate import Migrate
@@ -235,7 +230,7 @@ def get_users_calendar(user_id):
 
 
 def get_checkups_within_range(days=90):
-    today = datetime.now()
+    today = datetime.now() + timedelta(days=-1)
     range_days = timedelta(days=days)
     return db.session.query(t_users_calendar_vw).filter(t_users_calendar_vw.c.next_checkup_date
                                                         .between(str(today), str(today + range_days))).all()
