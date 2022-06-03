@@ -4,33 +4,35 @@ import moment from 'moment'
 import 'moment/locale/pl'
 import {Calendar, momentLocalizer, Event, ViewsProps, Messages, SlotInfo} from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import './styles.css'
-import {Link} from 'react-router-dom'
 
-import {Button, Container, Heading, useToast} from '@chakra-ui/react'
+import {Container, Heading, Stack, useToast} from '@chakra-ui/react'
 import {getApiUserCalendar} from '@/api'
-import {CalendarEvent} from './types'
 
-const events: Event[] = [
-  {
-    allDay: true,
-    end: new Date('2022-04-23'),
-    start: new Date('2022-04-23'),
-    title: 'Badanie zatok',
-  },
-  {
-    allDay: true,
-    end: new Date('2022-04-28'),
-    start: new Date('2022-04-28'),
-    title: 'Badania okresowe',
-  },
-  {
-    allDay: true,
-    end: new Date('2022-05-02'),
-    start: new Date('2022-05-02'),
-    title: 'Badanie wzroku',
-  },
-]
+import CalendarCustomVisit from './custom-visit'
+import './styles.css'
+
+// import {CalendarEvent} from './types'
+
+// const events: Event[] = [
+//   {
+//     allDay: true,
+//     end: new Date('2022-04-23'),
+//     start: new Date('2022-04-23'),
+//     title: 'Badanie zatok',
+//   },
+//   {
+//     allDay: true,
+//     end: new Date('2022-04-28'),
+//     start: new Date('2022-04-28'),
+//     title: 'Badania okresowe',
+//   },
+//   {
+//     allDay: true,
+//     end: new Date('2022-05-02'),
+//     start: new Date('2022-05-02'),
+//     title: 'Badanie wzroku',
+//   },
+// ]
 
 const calendarViews: ViewsProps<Event, object> = ['month']
 
@@ -44,7 +46,7 @@ const ExaminationCalendar = () => {
   const localizer = momentLocalizer(moment)
   const toast = useToast()
 
-  const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
+  // const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
   const [calendarEvents, setCalendarEvents] = React.useState<Event[]>([])
 
   React.useEffect(() => {
@@ -55,7 +57,7 @@ const ExaminationCalendar = () => {
         if (!response.success) {
           throw new Error(response.msg)
         }
-        setUserEvents(response.events)
+        // setUserEvents(response.events)
         setCalendarEvents(
           response.events.map((e) => ({
             allDay: true,
