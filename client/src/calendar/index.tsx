@@ -98,7 +98,7 @@ const ExaminationCalendar = () => {
         <CalendarCustomVisit onAddComplete={fetchEvents} />
 
         <Calendar
-        style={{height: 400}}
+          style={{height: 400}}
           messages={calendarTranslations}
           views={calendarViews}
           localizer={localizer}
