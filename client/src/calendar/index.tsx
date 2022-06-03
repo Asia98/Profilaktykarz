@@ -11,29 +11,6 @@ import {getApiUserCalendar} from '@/api'
 import CalendarCustomVisit from './custom-visit'
 import './styles.css'
 
-// import {CalendarEvent} from './types'
-
-// const events: Event[] = [
-//   {
-//     allDay: true,
-//     end: new Date('2022-04-23'),
-//     start: new Date('2022-04-23'),
-//     title: 'Badanie zatok',
-//   },
-//   {
-//     allDay: true,
-//     end: new Date('2022-04-28'),
-//     start: new Date('2022-04-28'),
-//     title: 'Badania okresowe',
-//   },
-//   {
-//     allDay: true,
-//     end: new Date('2022-05-02'),
-//     start: new Date('2022-05-02'),
-//     title: 'Badanie wzroku',
-//   },
-// ]
-
 const calendarViews: ViewsProps<Event, object> = ['month']
 
 const calendarTranslations: Messages = {
