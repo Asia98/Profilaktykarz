@@ -1,4 +1,4 @@
-import { CalendarEvent } from './calendar/types'
+import {CalendarEvent} from './calendar/types'
 import {Factor, LastVisitCheckup} from './types'
 
 export type GetApiFactorsResponse =
@@ -50,3 +50,19 @@ export type GetApiUserCalendarResponse =
       success: false
       msg: string
     }
+
+export type PostApiCustomVisitRequest = {
+  name: string
+  lastCheckup: string
+} & (
+  | {
+      cycle: number
+    }
+  | {
+      nextCheckup: string
+    }
+)
+
+export type PostApiCustomVisitResponse = {
+  success: boolean
+}

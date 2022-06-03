@@ -5,6 +5,8 @@ import {
   GetApiInfoFormStatusResponse,
   GetApiLastVisitsResponse,
   GetApiUserCalendarResponse,
+  PostApiCustomVisitRequest,
+  PostApiCustomVisitResponse,
   PostApiFactorsRequest,
   PostApiFactorsResponse,
 } from '@/models'
@@ -98,4 +100,20 @@ export const getApiUserCalendar = async () => {
   })
 
   return (await response.json()) as GetApiUserCalendarResponse
+}
+
+export const postApiCustomVisit = async (req: PostApiCustomVisitRequest) => {
+  const localStorageUser = localStorage.getItem('profilaktykarzUser')
+  if (!localStorageUser) {
+    throw new Error('User is not authenticated')
+  }
+  const user = JSON.parse(localStorageUser) as LocalStorageUser
+
+  const response = await fetch('http://localhost:5000/api/custom-visit', {
+    body: JSON.stringify(req),
+    headers: {Authorization: user.token, 'Content-Type': 'application/json'},
+    method: 'GET',
+  })
+
+  return (await response.json()) as PostApiCustomVisitResponse
 }
