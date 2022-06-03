@@ -49,28 +49,29 @@ const ExaminationCalendar = () => {
   // const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
   const [calendarEvents, setCalendarEvents] = React.useState<Event[]>([])
 
-  React.useEffect(() => {
-    ;(async () => {
-      try {
-        const response = await getApiUserCalendar()
-        console.log(response)
-        if (!response.success) {
-          throw new Error(response.msg)
-        }
-        // setUserEvents(response.events)
-        setCalendarEvents(
-          response.events.map((e) => ({
-            allDay: true,
-            end: new Date(e.date),
-            start: new Date(e.date),
-            title: e.name,
-          }))
-        )
-      } catch (e) {
-        console.error('Failed to load calendar events', e)
+  const fetchEvents = React.useCallback(async () => {
+    try {
+      const response = await getApiUserCalendar()
+      console.log(response)
+      if (!response.success) {
+        throw new Error(response.msg)
       }
-    })()
+      setCalendarEvents(
+        response.events.map((e) => ({
+          allDay: true,
+          end: new Date(e.date),
+          start: new Date(e.date),
+          title: e.name,
+        }))
+      )
+    } catch (e) {
+      console.error('Failed to load calendar events', e)
+    }
   }, [])
+
+  React.useEffect(() => {
+    fetchEvents()
+  }, []) // eslint-disable-line
 
   const handleCalendarEventsModalOpen = React.useCallback(
     (days: Date[]) => {
@@ -117,7 +118,7 @@ const ExaminationCalendar = () => {
           Kalendarz zalecanych terminów zbliżających się badań kontrolnych
         </Heading>
 
-        <CalendarCustomVisit />
+        <CalendarCustomVisit onAddComplete={fetchEvents} />
 
         <Calendar
         style={{height: 400}}
