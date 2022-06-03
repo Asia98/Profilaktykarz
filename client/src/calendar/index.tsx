@@ -109,21 +109,26 @@ const ExaminationCalendar = () => {
   )
 
   return (
-    <Container maxWidth="container.xl" h="500px">
-      <Heading size="lg" textAlign="center" my="5">
-        Kalendarz zalecanych terminów zbliżających się badań kontrolnych
-      </Heading>
+    <Container maxWidth="container.xl">
+      <Stack spacing="8" h="100%">
+        <Heading size="lg" mt="8" textAlign="center">
+          Kalendarz zalecanych terminów zbliżających się badań kontrolnych
+        </Heading>
 
-      <Calendar
-        messages={calendarTranslations}
-        views={calendarViews}
-        localizer={localizer}
-        events={calendarEvents}
-        startAccessor="start"
-        endAccessor="end"
-        onSelectSlot={handleSlotsSelect}
-        selectable={true}
-      />
+        <CalendarCustomVisit />
+
+        <Calendar
+        style={{height: 400}}
+          messages={calendarTranslations}
+          views={calendarViews}
+          localizer={localizer}
+          events={calendarEvents}
+          startAccessor="start"
+          endAccessor="end"
+          onSelectSlot={handleSlotsSelect}
+          selectable={true}
+        />
+      </Stack>
     </Container>
   )
 }
