@@ -2,8 +2,10 @@ import React from 'react'
 
 import {
   Button,
+  Divider,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Modal,
   ModalBody,
@@ -14,8 +16,13 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
 } from '@chakra-ui/react'
 import {postApiCustomVisit} from '@/api'
+import {PostApiCustomVisitRequest} from '@/models'
 
 type Props = {
   isOpen: boolean
@@ -24,6 +31,8 @@ type Props = {
 }
 
 const CreateUserDefinedCheckupModal = ({isOpen, onClose, onComplete}: Props) => {
+  const [mode, setMode] = React.useState<string>('next-checkup')
+
   const [name, setName] = React.useState('')
   const [cycle, setCycle] = React.useState(30)
   const [lastCheckup, setLastCheckup] = React.useState(new Date().toISOString().split('T')[0])
@@ -32,23 +41,33 @@ const CreateUserDefinedCheckupModal = ({isOpen, onClose, onComplete}: Props) => 
   const handleCreate = React.useCallback(async () => {
     try {
       console.log('TODO')
-      // const response = await postApiCustomVisit({
-      //   cycle: 10,
-      //   lastCheckup: '2022-06-04',
-      //   name: 'Test thing',
-      // })
+      const req: PostApiCustomVisitRequest =
+        mode === 'cycle'
+          ? {
+              cycle,
+              lastCheckup,
+              name,
+            }
+          : {
+              lastCheckup,
+              name,
+              nextCheckup,
+            }
 
-      console.log('name', name)
-      console.log('cycle', cycle)
-      console.log('lastCheckup', lastCheckup)
-      console.log('nextCheckup', nextCheckup)
+      console.log('req', req)
+      const response = await postApiCustomVisit(req)
+      console.log('response', response)
+
+      if (!response.success) {
+        throw new Error('Failed to create user defined checkup.')
+      }
 
       await onComplete()
       onClose()
     } catch (e) {
       console.error('Failed to submit user defined checkup')
     }
-  }, [cycle, lastCheckup, name, nextCheckup, onClose, onComplete])
+  }, [cycle, lastCheckup, mode, name, nextCheckup, onClose, onComplete])
 
   const handleNameChange = React.useCallback(({target: {value}}) => setName(value), [])
 
@@ -66,34 +85,51 @@ const CreateUserDefinedCheckupModal = ({isOpen, onClose, onComplete}: Props) => 
         <ModalCloseButton />
 
         <ModalBody>
-          <FormControl>
-            <FormLabel>Nazwa badania</FormLabel>
-            <Input onChange={handleNameChange} placeholder="Nazwa badania" value={name} />
-          </FormControl>
+          <RadioGroup onChange={setMode} value={mode}>
+            <Stack>
+              <FormControl>
+                <FormLabel>Nazwa badania</FormLabel>
+                <Input onChange={handleNameChange} placeholder="Nazwa badania" value={name} />
+              </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Ostatnie badanie</FormLabel>
-            <Input type="date" onChange={handleLastCheckupChange} placeholder="Ostatnie badanie" />
-          </FormControl>
+              <FormControl>
+                <FormLabel>Ostatnie badanie</FormLabel>
+                <Input type="date" onChange={handleLastCheckupChange} placeholder="Ostatnie badanie" />
+              </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Następne badanie</FormLabel>
-            <Input type="date" onChange={handleNextCheckupChange} placeholder="Ostatnie badanie" />
-          </FormControl>
+              <Text size="md" pt="5">
+                Wyznaczanie kolejnej wizyty
+              </Text>
 
-          <FormControl mt={4}>
-            <FormLabel>Co ile dni</FormLabel>
-            {/* <NumberInput type="date" onChange={handleCycleChange} placeholder="Co ile dni" /> */}
-            <NumberInput
-              defaultValue={30}
-              precision={0}
-              onChange={handleCycleChange}
-              value={cycle}
-              placeholder="Co ile dni"
-            >
-              <NumberInputField />
-            </NumberInput>
-          </FormControl>
+              <FormControl>
+                <FormLabel>
+                  <Radio value="next-checkup">Następne badanie</Radio>
+                </FormLabel>
+                <Input
+                  type="date"
+                  onChange={handleNextCheckupChange}
+                  placeholder="Ostatnie badanie"
+                  isDisabled={mode !== 'next-checkup'}
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>
+                  <Radio value="cycle">Co ile dni</Radio>
+                </FormLabel>
+                <NumberInput
+                  defaultValue={30}
+                  precision={0}
+                  onChange={handleCycleChange}
+                  value={cycle}
+                  placeholder="Co ile dni"
+                  isDisabled={mode !== 'cycle'}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            </Stack>
+          </RadioGroup>
         </ModalBody>
 
         <ModalFooter>
