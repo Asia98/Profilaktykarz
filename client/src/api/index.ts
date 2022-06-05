@@ -128,7 +128,7 @@ export const postApiCustomVisit = async (req: PostApiCustomVisitRequest) => {
   const response = await fetch('http://localhost:5000/api/custom-visit', {
     body: JSON.stringify(req),
     headers: {Authorization: user.token, 'Content-Type': 'application/json'},
-    method: 'GET',
+    method: 'POST',
   })
 
   return (await response.json()) as PostApiCustomVisitResponse

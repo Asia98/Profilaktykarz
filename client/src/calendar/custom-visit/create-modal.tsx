@@ -40,7 +40,6 @@ const CreateUserDefinedCheckupModal = ({isOpen, onClose, onComplete}: Props) => 
 
   const handleCreate = React.useCallback(async () => {
     try {
-      console.log('TODO')
       const req: PostApiCustomVisitRequest =
         mode === 'cycle'
           ? {
