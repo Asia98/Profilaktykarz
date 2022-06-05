@@ -356,7 +356,7 @@ class CustomVisits(Resource):
         except ValueError:
             return {"success": False, "msg": "Incorrect value passed as lastCheckup."}, 400
 
-        if not (_cycle_days and _next_checkup_date):
+        if not _cycle_days and not _next_checkup_date:
             return {"success": False, "msg": "One value of the following can't be empty: cycle, nextCheckup"}, 400
 
         if _cycle_days:

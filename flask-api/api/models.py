@@ -226,6 +226,10 @@ def get_users_calendar(user_id):
     events = db.session.query(t_users_calendar_vw, MedicalCheckup)\
         .filter(t_users_calendar_vw.c.checkup_id == MedicalCheckup.id) \
         .filter(t_users_calendar_vw.c.user_id == user_id).all()
+    custom_events = db.session.query(t_users_calendar_vw)\
+        .filter(t_users_calendar_vw.c.checkup_id == None)\
+        .filter(t_users_calendar_vw.c.user_id == user_id).all()
+    events.extend(custom_events)
     return events
 
 
