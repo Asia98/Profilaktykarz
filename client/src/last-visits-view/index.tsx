@@ -2,8 +2,7 @@ import React from 'react'
 
 import {Button, Container, Stack, useToast} from '@chakra-ui/react'
 
-import {getApiLastVisits} from '@/api'
-import {LastVisitCheckup} from '@/types'
+import {getApiLastVisits, postApiLastVisits} from '@/api'
 
 import CheckupItem from './checkup-item'
 import {LastVisitWithName} from './types'
@@ -53,8 +52,8 @@ const LastVisitsView = () => {
     []
   )
 
-  const handleSubmit = React.useCallback(() => {
-    console.log('checkups', checkups)
+  const handleSubmit = React.useCallback(async () => {
+    const response = await postApiLastVisits({checkups})
   }, [checkups])
 
   return (

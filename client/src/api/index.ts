@@ -7,6 +7,8 @@ import {
   GetApiUserCalendarResponse,
   PostApiFactorsRequest,
   PostApiFactorsResponse,
+  PostApiLastVisitsRequest,
+  PostApiLastVisitsResponse,
 } from '@/models'
 
 export const getApiFactors = async () => {
@@ -98,4 +100,20 @@ export const getApiUserCalendar = async () => {
   })
 
   return (await response.json()) as GetApiUserCalendarResponse
+}
+
+export const postApiLastVisits = async (req: PostApiLastVisitsRequest) => {
+  const localStorageUser = localStorage.getItem('profilaktykarzUser')
+  if (!localStorageUser) {
+    throw new Error('User is not authenticated')
+  }
+  const user = JSON.parse(localStorageUser) as LocalStorageUser
+
+  const response = await fetch('http://localhost:5000/api/last-visits', {
+    body: JSON.stringify(req),
+    headers: {Authorization: user.token, 'Content-Type': 'application/json'},
+    method: 'POST',
+  })
+
+  return (await response.json()) as PostApiLastVisitsResponse
 }
