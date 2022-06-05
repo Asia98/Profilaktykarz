@@ -2,7 +2,7 @@ import React from 'react'
 
 import {Box, Button, Flex, Text, useColorModeValue, useDisclosure} from '@chakra-ui/react'
 
-import CreateCustomCheckupModal from './create-modal'
+import CreateUserDefinedCheckupModal from './create-modal'
 
 type Props = {
   onAddComplete: () => Promise<void>
@@ -11,9 +11,9 @@ type Props = {
 const CalendarCustomVisit = ({onAddComplete}: Props) => {
   const backgroundColor = useColorModeValue('#f9dca9', 'orange.700')
   const {
-    isOpen: isCreateCustomCheckupModalOpen,
-    onOpen: onCreateCustomCheckupModalOpen,
-    onClose: onCreateCustomCheckupModalClose,
+    isOpen: isCreateUserDefinedCheckupModalOpen,
+    onOpen: onCreateUserDefinedCheckupModalOpen,
+    onClose: onCreateUserDefinedCheckupModalClose,
   } = useDisclosure()
 
   return (
@@ -25,7 +25,7 @@ const CalendarCustomVisit = ({onAddComplete}: Props) => {
             pracy), dodaj własne przypomnienia.
           </Text>
           <Button
-            onClick={onCreateCustomCheckupModalOpen}
+            onClick={onCreateUserDefinedCheckupModalOpen}
             borderRadius="full"
             p="5"
             variant="outline"
@@ -36,9 +36,9 @@ const CalendarCustomVisit = ({onAddComplete}: Props) => {
           </Button>
         </Flex>
       </Box>
-      <CreateCustomCheckupModal
-        isOpen={isCreateCustomCheckupModalOpen}
-        onClose={onCreateCustomCheckupModalClose}
+      <CreateUserDefinedCheckupModal
+        isOpen={isCreateUserDefinedCheckupModalOpen}
+        onClose={onCreateUserDefinedCheckupModalClose}
         onComplete={onAddComplete}
       />
     </>
