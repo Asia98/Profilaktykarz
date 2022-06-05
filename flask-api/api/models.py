@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from datetime import datetime, timedelta
 
 from flask_migrate import Migrate
@@ -123,10 +118,6 @@ class MedicalCheckup(db.Model):
     def __repr__(self):
         return f"Medical checkup {self.medical_checkup}"
 
-    @classmethod
-    def get_link_by_checkup_name(cls, checkup_name):
-        return cls.query.filter(f.lower(cls.medical_checkup) == f.lower(checkup_name)).first()
-
 
 class UsersMedicalInfo(db.Model):
     __tablename__ = 'users_medical_info'
@@ -232,11 +223,14 @@ t_users_calendar_vw = db.Table(
 
 
 def get_users_calendar(user_id):
-    return db.session.query(t_users_calendar_vw).filter_by(user_id=user_id).all()
+    events = db.session.query(t_users_calendar_vw, MedicalCheckup)\
+        .filter(t_users_calendar_vw.c.checkup_id == MedicalCheckup.id) \
+        .filter(t_users_calendar_vw.c.user_id == user_id).all()
+    return events
 
 
-def check_checkups_within_range(days=90):
-    today = datetime.now()
+def get_checkups_within_range(days=90):
+    today = datetime.now() + timedelta(days=-1)
     range_days = timedelta(days=days)
     return db.session.query(t_users_calendar_vw).filter(t_users_calendar_vw.c.next_checkup_date
                                                         .between(str(today), str(today + range_days))).all()

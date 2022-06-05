@@ -11,3 +11,4 @@ Flask-Migrate
 pyyaml
 psycopg2
 python-dateutil
+pandas

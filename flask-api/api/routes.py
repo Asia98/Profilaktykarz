@@ -50,7 +50,8 @@ last_visits_model = rest_api.model('LastVisitsView', {"id": fields.Integer(requi
 
 calendar_model = rest_api.model('CalendarView', {"name": fields.String(required=True, min_length=2,
                                                                        max_length=100, attribute='medical_checkup'),
-                                                 "date": fields.Date(required=True, attribute='next_checkup_date')
+                                                 "date": fields.Date(required=True, attribute='next_checkup_date'),
+                                                 "link": fields.String(required=False, attribute='MedicalCheckup.link')
                                                  })
 
 medical_checkup_link = rest_api.model('CheckupLink', {"link": fields.String(required=True, min_length=2,
@@ -338,26 +339,6 @@ class CalendarView(Resource):
         return response, 200
 
 
-@rest_api.route('/api/user-calendar/checkup_link')
-class CheckupLink(Resource):
-    def get(self):
-        req_data = request.get_json()
-        _checkup_name = req_data.get("checkupName")
-
-        checkup_link = MedicalCheckup.get_link_by_checkup_name(_checkup_name)
-
-        if checkup_link is None:
-            return {"success": False, "msg": "No checkup with this name could be found in database."}, 400
-
-        else:
-            mrsh_checkup_link = marshal(checkup_link, medical_checkup_link)
-            response = {
-                "success": True,
-                "link": mrsh_checkup_link["link"]
-            }
-            return response, 200
-
-
 @rest_api.route('/api/custom-visit')
 class CustomVisits(Resource):
     @token_required
@@ -375,7 +356,7 @@ class CustomVisits(Resource):
         except ValueError:
             return {"success": False, "msg": "Incorrect value passed as lastCheckup."}, 400
 
-        if not(_cycle_days and _next_checkup_date):
+        if not (_cycle_days and _next_checkup_date):
             return {"success": False, "msg": "One value of the following can't be empty: cycle, nextCheckup"}, 400
 
         if _cycle_days:
