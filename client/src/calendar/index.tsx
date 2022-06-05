@@ -4,33 +4,12 @@ import moment from 'moment'
 import 'moment/locale/pl'
 import {Calendar, momentLocalizer, Event, ViewsProps, Messages, SlotInfo} from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import './styles.css'
-import {Link} from 'react-router-dom'
 
-import {Button, Container, Heading, useToast} from '@chakra-ui/react'
+import {Container, Heading, Stack, useToast} from '@chakra-ui/react'
 import {getApiUserCalendar} from '@/api'
-import {CalendarEvent} from './types'
 
-const events: Event[] = [
-  {
-    allDay: true,
-    end: new Date('2022-04-23'),
-    start: new Date('2022-04-23'),
-    title: 'Badanie zatok',
-  },
-  {
-    allDay: true,
-    end: new Date('2022-04-28'),
-    start: new Date('2022-04-28'),
-    title: 'Badania okresowe',
-  },
-  {
-    allDay: true,
-    end: new Date('2022-05-02'),
-    start: new Date('2022-05-02'),
-    title: 'Badanie wzroku',
-  },
-]
+import CalendarCustomVisit from './custom-visit'
+import './styles.css'
 
 const calendarViews: ViewsProps<Event, object> = ['month']
 
@@ -44,31 +23,32 @@ const ExaminationCalendar = () => {
   const localizer = momentLocalizer(moment)
   const toast = useToast()
 
-  const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
+  // const [userEvents, setUserEvents] = React.useState<CalendarEvent[]>([])
   const [calendarEvents, setCalendarEvents] = React.useState<Event[]>([])
 
-  React.useEffect(() => {
-    ;(async () => {
-      try {
-        const response = await getApiUserCalendar()
-        console.log(response)
-        if (!response.success) {
-          throw new Error(response.msg)
-        }
-        setUserEvents(response.events)
-        setCalendarEvents(
-          response.events.map((e) => ({
-            allDay: true,
-            end: new Date(e.date),
-            start: new Date(e.date),
-            title: e.name,
-          }))
-        )
-      } catch (e) {
-        console.error('Failed to load calendar events', e)
+  const fetchEvents = React.useCallback(async () => {
+    try {
+      const response = await getApiUserCalendar()
+      console.log(response)
+      if (!response.success) {
+        throw new Error(response.msg)
       }
-    })()
+      setCalendarEvents(
+        response.events.map((e) => ({
+          allDay: true,
+          end: new Date(e.date),
+          start: new Date(e.date),
+          title: e.name,
+        }))
+      )
+    } catch (e) {
+      console.error('Failed to load calendar events', e)
+    }
   }, [])
+
+  React.useEffect(() => {
+    fetchEvents()
+  }, []) // eslint-disable-line
 
   const handleCalendarEventsModalOpen = React.useCallback(
     (days: Date[]) => {
@@ -109,21 +89,26 @@ const ExaminationCalendar = () => {
   )
 
   return (
-    <Container maxWidth="container.xl" h="500px">
-      <Heading size="lg" textAlign="center" my="5">
-        Kalendarz zalecanych terminów zbliżających się badań kontrolnych
-      </Heading>
+    <Container maxWidth="container.xl">
+      <Stack spacing="8" h="100%">
+        <Heading size="lg" mt="8" textAlign="center">
+          Kalendarz zalecanych terminów zbliżających się badań kontrolnych
+        </Heading>
 
-      <Calendar
-        messages={calendarTranslations}
-        views={calendarViews}
-        localizer={localizer}
-        events={calendarEvents}
-        startAccessor="start"
-        endAccessor="end"
-        onSelectSlot={handleSlotsSelect}
-        selectable={true}
-      />
+        <CalendarCustomVisit onAddComplete={fetchEvents} />
+
+        <Calendar
+          style={{height: 400}}
+          messages={calendarTranslations}
+          views={calendarViews}
+          localizer={localizer}
+          events={calendarEvents}
+          startAccessor="start"
+          endAccessor="end"
+          onSelectSlot={handleSlotsSelect}
+          selectable={true}
+        />
+      </Stack>
     </Container>
   )
 }

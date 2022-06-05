@@ -59,3 +59,19 @@ export type PostApiLastVisitsRequest = {
 export type PostApiLastVisitsResponse = {
   success: boolean
 }
+
+export type PostApiCustomVisitRequest = {
+  name: string
+  lastCheckup: string
+} & (
+  | {
+      cycle: number
+    }
+  | {
+      nextCheckup: string
+    }
+)
+
+export type PostApiCustomVisitResponse = {
+  success: boolean
+}
