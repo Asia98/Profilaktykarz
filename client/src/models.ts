@@ -1,4 +1,5 @@
 import {CalendarEvent} from './calendar/types'
+import {LastVisit} from './last-visits-view/types'
 import {Factor, LastVisitCheckup} from './types'
 
 export type GetApiFactorsResponse =
@@ -26,13 +27,6 @@ export type PostApiFactorsResponse = {
   msg: string
 }
 
-export type GetApiLastVisitsResponse = {
-  success: boolean
-  data: {
-    checkups: LastVisitCheckup[]
-  }
-}
-
 export type GetApiInfoFormStatusResponse = {
   medicalInfo: boolean
 }
@@ -50,6 +44,21 @@ export type GetApiUserCalendarResponse =
       success: false
       msg: string
     }
+
+export type GetApiLastVisitsResponse = {
+  success: boolean
+  data: {
+    checkups: LastVisitCheckup[]
+  }
+}
+
+export type PostApiLastVisitsRequest = {
+  checkups: LastVisit[]
+}
+
+export type PostApiLastVisitsResponse = {
+  success: boolean
+}
 
 export type PostApiCustomVisitRequest = {
   name: string

@@ -7,3 +7,4 @@ postgresDB:
 
 flask_secret:
 jwt_secret:
+email_password:

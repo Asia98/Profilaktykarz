@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 import os
 from datetime import timedelta
 
@@ -11,7 +6,7 @@ import yaml
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-class BaseConfig():
+class BaseConfig:
     with open('api/config.yml', 'r') as file:
         conf = yaml.safe_load(file)
 
@@ -25,5 +20,6 @@ class BaseConfig():
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = conf['flask_secret']
     JWT_SECRET_KEY = conf['jwt_secret']
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)
+    EMAIL_PASSWORD = conf['email_password']
 
