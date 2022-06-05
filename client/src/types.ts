@@ -3,3 +3,8 @@ export type Factor = {
   name: string
   description: string
 }
+
+export type LastVisitCheckup = {
+  id: number
+  name: string
+}

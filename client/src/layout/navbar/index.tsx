@@ -59,7 +59,7 @@ const Navbar = () => {
   }, [history])
 
   return (
-    <Box bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box bg={useColorModeValue('gray.100', 'gray.900')} borderBottom="gray 1px solid">
       <Container maxW="container.xl">
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <IconButton
