@@ -8,7 +8,7 @@ import 'rc-year-calendar/locales/rc-year-calendar.pl'
 import {getApiUserCalendar} from '@/api'
 import useValueDisclosure from '@/common/useValueDisclosure'
 
-import CalendarDayModal from './calendar-events-modal'
+import CalendarDayModal from './calendar-day-modal'
 import CalendarCustomVisit from './custom-visit'
 import './styles.css'
 import {CalendarEvent} from './types'
