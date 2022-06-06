@@ -1,4 +1,4 @@
-import {CalendarEvent} from './calendar/types'
+import {CalendarResponseEvent} from './calendar/types'
 import {LastVisit} from './last-visits-view/types'
 import {Factor, LastVisitCheckup} from './types'
 
@@ -38,7 +38,7 @@ export type GetApiCheckupFormStatusResponse = {
 export type GetApiUserCalendarResponse =
   | {
       success: true
-      events: CalendarEvent[]
+      events: CalendarResponseEvent[]
     }
   | {
       success: false
