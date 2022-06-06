@@ -14,7 +14,7 @@ flask run
 Second terminal: starting frontend
 ```
 cd client
-npm install && npm start 
+npm install --force && npm start 
 ```
 
-Once executed, open browser: http://localhost:3000/login
+Once executed, open browser: http://localhost:3000
