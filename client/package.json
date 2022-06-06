@@ -28,6 +28,7 @@
     "i18next-browser-languagedetector": "^6.1.2",
     "postcss": "^8.2.14",
     "prettier": "^2.2.1",
+    "rc-year-calendar": "^1.0.2",
     "react": "^17.0.1",
     "react-big-calendar": "^0.40.1",
     "react-countdown": "^2.3.2",
