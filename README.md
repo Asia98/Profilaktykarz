@@ -13,6 +13,8 @@ flask run
 
 Second terminal: starting frontend
 ```
-cd react-ui
+cd client
 npm install && npm start 
 ```
+
+Once executed, open browser: http://localhost:3000/login
