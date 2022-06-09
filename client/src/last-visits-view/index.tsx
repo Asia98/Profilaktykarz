@@ -1,16 +1,19 @@
 import React from 'react'
 
-import {Button, Container, Stack, useToast} from '@chakra-ui/react'
+import {Button, Container, Flex, Spinner, Stack, Text, useToast} from '@chakra-ui/react'
 
 import {getApiLastVisits, postApiLastVisits} from '@/api'
 
 import CheckupItem from './checkup-item'
 import {LastVisitWithName} from './types'
+import {useHistory} from 'react-router-dom'
 
 const LastVisitsView = () => {
   const toast = useToast()
+  const history = useHistory()
 
   const [checkups, setCheckups] = React.useState<LastVisitWithName[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     ;(async () => {
@@ -37,6 +40,7 @@ const LastVisitsView = () => {
           status: 'error',
         })
       }
+      setIsLoading(false)
     })()
   }, [toast])
 
@@ -53,12 +57,26 @@ const LastVisitsView = () => {
   )
 
   const handleSubmit = React.useCallback(async () => {
-    const response = await postApiLastVisits({checkups})
-  }, [checkups])
+    try {
+      const response = await postApiLastVisits({checkups})
+      if (!response.success) {
+        throw new Error('No success')
+      }
+      history.push('/calendar')
+    } catch (e) {
+      console.error('Failed to submit last visits', e)
+    }
+  }, [checkups, history])
 
   return (
     <Container maxW="container.md">
       <Stack spacing="5" py="5">
+        {isLoading && (
+          <Stack alignItems="center">
+            <Spinner size="xl" />
+            <Text>Ładowanie...</Text>
+          </Stack>
+        )}
         {checkups.map((checkup, i) => (
           <CheckupItem
             key={i}
