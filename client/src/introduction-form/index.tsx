@@ -34,6 +34,7 @@ const IntroductionForm = () => {
   const [checkedFamilyFactors, setCheckedFamilyFactors] = React.useState<number[]>([])
 
   const [isLoadingFactors, setIsLoadingFactors] = React.useState(true)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   React.useEffect(() => {
     ;(async () => {
@@ -57,11 +58,8 @@ const IntroductionForm = () => {
     if (!birthDate || !gender) {
       return
     }
-    console.log(birthDate)
-    console.log(gender)
-    console.log(checkedFamilyFactors)
-    console.log(checkedUserFactors)
 
+    setIsSubmitting(true)
     try {
       const response = await postApiFactors({
         birthDate: birthDate,
@@ -87,6 +85,7 @@ const IntroductionForm = () => {
         status: 'error',
       })
     }
+    setIsSubmitting(false)
   }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, history, toast])
 
   const handleDateChange = React.useCallback(({target: {value}}) => {
@@ -97,7 +96,10 @@ const IntroductionForm = () => {
     setBirthDate(new Date(value))
   }, [])
 
-  const isSubmitDisabled = React.useMemo(() => !birthDate || !gender, [birthDate, gender])
+  const isSubmitDisabled = React.useMemo(
+    () => !birthDate || !gender || isLoadingFactors || isSubmitting,
+    [birthDate, gender, isLoadingFactors, isSubmitting]
+  )
 
   return (
     <Container maxW="container.sm" py="2">

@@ -14,6 +14,7 @@ const LastVisitsView = () => {
 
   const [checkups, setCheckups] = React.useState<LastVisitWithName[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   React.useEffect(() => {
     ;(async () => {
@@ -57,6 +58,7 @@ const LastVisitsView = () => {
   )
 
   const handleSubmit = React.useCallback(async () => {
+    setIsSubmitting(true)
     try {
       const response = await postApiLastVisits({checkups})
       if (!response.success) {
@@ -66,6 +68,7 @@ const LastVisitsView = () => {
     } catch (e) {
       console.error('Failed to submit last visits', e)
     }
+    setIsSubmitting(false)
   }, [checkups, history])
 
   return (
@@ -85,7 +88,7 @@ const LastVisitsView = () => {
             onResultChange={handleResultChange}
           />
         ))}
-        <Button colorScheme="green" onClick={handleSubmit}>
+        <Button colorScheme="green" onClick={handleSubmit} isDisabled={isLoading || isSubmitting}>
           Wyślij
         </Button>
       </Stack>
