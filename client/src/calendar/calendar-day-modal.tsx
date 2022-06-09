@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   Text,
 } from '@chakra-ui/react'
 
@@ -31,16 +32,18 @@ const CalendarDayModal = ({isOpen, onClose, value, date}: Props) => {
         <ModalHeader>Badania na dzień {date.toISOString().split('T')[0]}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {value.map((event, i) => (
-            <Flex key={i} justifyContent="space-between" alignItems="center">
-              <Text fontWeight="semibold">{event.name}</Text>
-              {event.link && (
-                <Button as={Link} href={event.link} isExternal={true} size="sm">
-                  Znajdź specjalistę
-                </Button>
-              )}
-            </Flex>
-          ))}
+          <Stack>
+            {value.map((event, i) => (
+              <Flex key={i} justifyContent="space-between" alignItems="center">
+                <Text fontWeight="semibold">{event.name}</Text>
+                {event.link && (
+                  <Button as={Link} href={event.link} isExternal={true} size="sm">
+                    Znajdź specjalistę
+                  </Button>
+                )}
+              </Flex>
+            ))}
+          </Stack>
         </ModalBody>
 
         <ModalFooter>
