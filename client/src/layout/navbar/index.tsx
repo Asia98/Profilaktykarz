@@ -35,12 +35,16 @@ const Navbar = () => {
   const links: NavLinkProps[] = React.useMemo(
     () => [
       {
-        absolutePath: '/introduction-form',
-        label: 'Intro',
+        absolutePath: '/last-visits',
+        label: 'Uzupełnij ostatnie wizyty',
       },
       {
         absolutePath: '/calendar',
         label: 'Kalendarz',
+      },
+      {
+        absolutePath: '/prevention',
+        label: 'Profilaktyka',
       },
     ],
     []

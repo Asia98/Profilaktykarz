@@ -12,6 +12,7 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
+import {useHistory} from 'react-router-dom'
 
 import {getApiFactors, postApiFactors} from '@/api'
 import Loading from '@/common/loading'
@@ -21,6 +22,7 @@ import IntroductionFormFactors from './factors'
 
 const IntroductionForm = () => {
   const toast = useToast()
+  const history = useHistory()
 
   const [birthDate, setBirthDate] = React.useState<Date>()
   const [gender, setGender] = React.useState<string>()
@@ -32,6 +34,7 @@ const IntroductionForm = () => {
   const [checkedFamilyFactors, setCheckedFamilyFactors] = React.useState<number[]>([])
 
   const [isLoadingFactors, setIsLoadingFactors] = React.useState(true)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   React.useEffect(() => {
     ;(async () => {
@@ -55,11 +58,8 @@ const IntroductionForm = () => {
     if (!birthDate || !gender) {
       return
     }
-    console.log(birthDate)
-    console.log(gender)
-    console.log(checkedFamilyFactors)
-    console.log(checkedUserFactors)
 
+    setIsSubmitting(true)
     try {
       const response = await postApiFactors({
         birthDate: birthDate,
@@ -76,6 +76,7 @@ const IntroductionForm = () => {
         return
       }
       console.log(response)
+      history.push('/last-visits')
     } catch (e) {
       console.error('Failed to submit a form', e)
       toast({
@@ -84,7 +85,8 @@ const IntroductionForm = () => {
         status: 'error',
       })
     }
-  }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, toast])
+    setIsSubmitting(false)
+  }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, history, toast])
 
   const handleDateChange = React.useCallback(({target: {value}}) => {
     if (!value) {
@@ -94,7 +96,10 @@ const IntroductionForm = () => {
     setBirthDate(new Date(value))
   }, [])
 
-  const isSubmitDisabled = React.useMemo(() => !birthDate || !gender, [birthDate, gender])
+  const isSubmitDisabled = React.useMemo(
+    () => !birthDate || !gender || isLoadingFactors || isSubmitting,
+    [birthDate, gender, isLoadingFactors, isSubmitting]
+  )
 
   return (
     <Container maxW="container.sm" py="2">
