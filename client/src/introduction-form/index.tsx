@@ -12,6 +12,7 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
+import {useHistory} from 'react-router-dom'
 
 import {getApiFactors, postApiFactors} from '@/api'
 import Loading from '@/common/loading'
@@ -21,6 +22,7 @@ import IntroductionFormFactors from './factors'
 
 const IntroductionForm = () => {
   const toast = useToast()
+  const history = useHistory()
 
   const [birthDate, setBirthDate] = React.useState<Date>()
   const [gender, setGender] = React.useState<string>()
@@ -76,6 +78,7 @@ const IntroductionForm = () => {
         return
       }
       console.log(response)
+      history.push('/last-visits')
     } catch (e) {
       console.error('Failed to submit a form', e)
       toast({
@@ -84,7 +87,7 @@ const IntroductionForm = () => {
         status: 'error',
       })
     }
-  }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, toast])
+  }, [birthDate, checkedFamilyFactors, checkedUserFactors, gender, history, toast])
 
   const handleDateChange = React.useCallback(({target: {value}}) => {
     if (!value) {

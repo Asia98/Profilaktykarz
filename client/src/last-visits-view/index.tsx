@@ -1,12 +1,12 @@
 import React from 'react'
 
-import {Button, Container, Flex, Spinner, Stack, Text, useToast} from '@chakra-ui/react'
+import {Button, Container, Spinner, Stack, Text, useToast} from '@chakra-ui/react'
+import {useHistory} from 'react-router-dom'
 
 import {getApiLastVisits, postApiLastVisits} from '@/api'
 
 import CheckupItem from './checkup-item'
 import {LastVisitWithName} from './types'
-import {useHistory} from 'react-router-dom'
 
 const LastVisitsView = () => {
   const toast = useToast()
