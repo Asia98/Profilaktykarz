@@ -43,10 +43,6 @@ def main():
     sender_email = "profilaktykarz@op.pl"
     password = BaseConfig.EMAIL_PASSWORD
 
-    message = MIMEMultipart("alternative")
-    message["Subject"] = "Profilaktykarz: Przypomnienie o nadchodzących badaniach"
-    message["From"] = sender_email
-
     # Create the plain-text and HTML version of your message
     text_template = read_template("mail_templates/txt_template.txt")
     html_template = read_template("mail_templates/html_template.html")
@@ -57,6 +53,10 @@ def main():
         server.login(sender_email, password)
 
         for index, row in user_data.iterrows():
+            message = MIMEMultipart("alternative")
+            message["Subject"] = "Profilaktykarz: Przypomnienie o nadchodzących badaniach"
+            message["From"] = sender_email
+
             user_id = row['user_id']
             receiver_email = row['user_email']
             message["To"] = receiver_email
